@@ -1,0 +1,216 @@
+# The Xcode project, written as something you can read.
+#
+# The Mac app is a shell script and no Xcode project, deliberately. The phone
+# cannot be: signing a build onto a real device and asking for the camera and
+# the LiDAR sensor are things only Xcode's machinery grants. So the project is
+# *generated* from this file (`xcodegen`) rather than hand-edited, which keeps
+# the readable-source rule intact — this file is the truth, the .xcodeproj is
+# build output and is not committed.
+
+name: Shotlister
+options:
+  bundleIdPrefix: com.example.shotlister
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: YOURTEAMID
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.9"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    # The engine is cross-compiled per-architecture by hand, and Rust builds
+    # arm64 only — for the device and for the simulator alike. Without this the
+    # simulator build also tries x86_64 and fails to link against a library that
+    # was never built for it.
+    ARCHS: arm64
+
+targets:
+  Shotlister:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      # Words both apps say, written once — `shared/Words.swift`. The Mac picks
+      # the same file up through studio/build.sh. Ref 181: a sentence that
+      # exists twice is a sentence that drifts.
+      - path: ../shared
+      # The app icon, one Icon Composer document for both apps — the Mac picks
+      # the same one up through release/icon/build-icon.sh. Xcode compiles it
+      # here; nothing about it is iPhone-specific.
+      - path: ../release/icon/Shotlister.icon
+        type: file
+        buildPhase: resources
+      # How a lock screen shortcut looks, compiled here too so `--widgetfaces`
+      # can photograph it in a simulator.
+      - path: Widgets/ShortcutFace.swift
+      - path: Widgets/InfoWidgets.swift
+    dependencies:
+      - target: ShotlisterWidgets
+        embed: true
+    info:
+      path: Info.plist
+      properties:
+        CFBundleName: Shotlister
+        CFBundleDisplayName: Shotlister
+        CFBundleShortVersionString: "0.1"
+        CFBundleVersion: "1"
+        # **His iPhone draws at 120 Hz; without this we are held to 60.**
+        #
+        # iOS caps any app that does not ask for more to a 60 Hz refresh on a
+        # ProMotion phone, so Shotlister scrolled at half the rate of every
+        # Apple app beside it. Nothing was being dropped: a 26-second recording
+        # of his on 2026-09-02 delivered a frame every 16.7 ms through nineteen
+        # seconds of scrolling, with not one gap over 25 ms anywhere inside the
+        # app. Smooth at 60 Hz on a 120 Hz screen is what a fast flick reads as
+        # rough while a slow drag looks fine — it moves less between frames.
+        #
+        # It goes here and not in Info.plist: xcodegen *writes* that file from
+        # this block on every build, so an edit made there is gone by the time
+        # the app is installed. Checked, and it was — the key was missing from
+        # the built bundle until it was moved here.
+        CADisableMinimumFrameDurationOnPhone: true
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # **An iPad turns every way.** App Store Connect refuses an upload
+        # that runs on iPad (TARGETED_DEVICE_FAMILY 1,2) and does not list all
+        # four — the iPad's multitasking needs them (error 90474, the first
+        # TestFlight upload, 2026-10-06). The iPhone keeps the three above.
+        # Only the system's own HTTPS — exempt, so TestFlight need not ask
+        # about encryption for every build.
+        ITSAppUsesNonExemptEncryption: false
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # Why each permission is asked for, in his words rather than Apple's.
+        NSCameraUsageDescription: Shotlister uses the camera to photograph locations and to scan rooms.
+        NSPhotoLibraryUsageDescription: Shotlister adds photos from your library to a location.
+        NSPhotoLibraryAddUsageDescription: Shotlister saves frames back to your library.
+        NSLocationWhenInUseUsageDescription: Shotlister records where a location is, so the map and sun position are right.
+        NSMicrophoneUsageDescription: Shotlister records a spoken note against a location.
+        # iOS will not answer "is this app installed?" for a scheme an app has
+        # not declared an interest in. Without these the viewfinder entries
+        # would never appear even where the app is right there.
+        LSApplicationQueriesSchemes:
+          - cadrage
+          - cadrageviewfinder
+          - com.cadrage.viewfinder
+          - finderkit
+          - findErKit
+          - artemis
+        # So a project folder can be opened from iCloud Drive in place.
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        # So a widget (or anything else) can launch Shotlister directly with a tap.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.example.shotlister.phone
+            CFBundleURLSchemes:
+              - shotlister
+    # **The Keychain group, and why it is spelled out here.**
+    #
+    # The app keeps one thing in the Keychain: the password for his relay. An
+    # app with no keychain group is not allowed to keep anything there —
+    # `SecItemAdd` answers -34018, *a required entitlement isn't present*, and
+    # it answers it silently unless somebody reads the result. That is how this
+    # was found: the setup sheet closed as though it had saved and the ⋯ menu
+    # went on offering "Set up sync".
+    #
+    # The properties live here rather than in a hand-written .entitlements
+    # file, because **xcodegen writes that file** — given a path and no
+    # properties it puts an empty dict there and overwrites whatever was in it.
+    #
+    # The team prefix is written out rather than as $(AppIdentifierPrefix):
+    # that variable comes from a provisioning profile, and in the simulator
+    # there is none, so it expands to nothing and the entitlement stops
+    # matching its own group.
+    entitlements:
+      path: Shotlister.entitlements
+      properties:
+        keychain-access-groups:
+          - YOURTEAMID.com.example.shotlister.phone
+        # Shared with the lock screen widgets, which run in their own process
+        # and can read nothing of the app's but this: the four shortcuts.
+        com.apple.security.application-groups:
+          - group.com.example.shotlister
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.shotlister.phone
+        ASSETCATALOG_COMPILER_APPICON_NAME: Shotlister
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/Bridging.h
+        OTHER_LDFLAGS: -lshotlister_ffi
+        TARGETED_DEVICE_FAMILY: "1,2"
+      configs:
+        Debug:
+          LIBRARY_SEARCH_PATHS[sdk=iphoneos*]: $(SRCROOT)/../ffi/target/aarch64-apple-ios/release
+          LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]: $(SRCROOT)/../ffi/target/aarch64-apple-ios-sim/release
+        Release:
+          LIBRARY_SEARCH_PATHS[sdk=iphoneos*]: $(SRCROOT)/../ffi/target/aarch64-apple-ios/release
+          LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]: $(SRCROOT)/../ffi/target/aarch64-apple-ios-sim/release
+    scheme:
+      testTargets:
+        - ShotlisterUITests
+
+  # **The lock screen widgets** (his ask, 2026-10-09): *Shotlister*, which
+  # opens the app, and *Shotlister Shortcut*, which opens one of the four
+  # shortcuts set in the app's Settings. Its own process, as WidgetKit
+  # extensions always are; it shares one model file with the app and reads
+  # the shortcuts out of the App Group. No engine: it never opens a film.
+  ShotlisterWidgets:
+    type: app-extension
+    platform: iOS
+    # Control Center buttons are iOS 18's; the widgets ride with them. The
+    # app itself still opens on 17.
+    deploymentTarget: "18.0"
+    sources:
+      - path: Widgets
+      - path: Sources/LockShortcuts.swift
+      - path: Sources/ControlActions.swift
+      # The film's icon, drawn the way the app draws it.
+      - path: Sources/Mark.swift
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleName: ShotlisterWidgets
+        CFBundleDisplayName: Shotlister
+        CFBundleShortVersionString: "0.1"
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widgets/ShotlisterWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.example.shotlister
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.shotlister.phone.widgets
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SKIP_INSTALL: YES
+
+  # **The half of checking a simulator cannot do by itself** (2026-10-07).
+  #
+  # `checks.sh` runs the phone's decoder over his real projects and never
+  # draws anything, and `--film` opens any screen for a photograph — but
+  # neither can press a button. A tap was the one thing left unproven in the
+  # look pass, so it gets a target of its own rather than a promise.
+  ShotlisterUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: UITests
+    dependencies:
+      - target: Shotlister
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.shotlister.phone.uitests
+        TEST_TARGET_NAME: Shotlister
+        GENERATE_INFOPLIST_FILE: YES

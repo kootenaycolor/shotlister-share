@@ -1,0 +1,28 @@
+[package]
+name = "shotlister-remote"
+version = "0.1.0"
+edition = "2021"
+description = "What to send to the relay and what to fetch from it. Decides; never does."
+
+# No HTTP client, and that is the design rather than an omission — see the note
+# at the top of src/lib.rs. This works out *what* should move; a shell moves it,
+# which is the same split that keeps the engine free of the file system.
+[dependencies]
+shotlister-engine = { path = "../engine" }
+# Only `courier` reaches for this; the deciding half stays clear of the disk.
+shotlister-storage = { path = "../storage", optional = true }
+
+# **The courier is optional so the phone never contains it.** It carries files
+# by running `curl`, which is right for a Mac and for anything headless and is
+# simply not a thing on iOS. The apps hand transfers to URLSession instead, and
+# build this with `default-features = false` so the deciding half comes along
+# and the process-spawning half does not.
+[features]
+default = ["courier"]
+# Looking at the project folder. The apps want this and not the curl half.
+local = ["dep:shotlister-storage"]
+courier = ["local"]
+
+[lib]
+name = "shotlister_remote"
+path = "src/lib.rs"

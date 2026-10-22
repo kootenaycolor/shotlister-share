@@ -1,0 +1,156 @@
+/* Share, as a popover (move 3 of design/29-portal-details). Built out of
+ * feel.css: the surface is `.fx-pop` (feel.pop opens it), the ticks are
+ * `.fx-ck`. Loaded by share.js the first time Share opens.
+ *
+ *   .sp            the popover        .sp-h      head: Share + the two tabs
+ *   .sp-seg        a segmented control (.sm = the small On Links | For Me)
+ *   .sp-link       the link line      .sp-dd     a quiet dropdown
+ *   .sp-row        a person, an invite, a view
+ *   .sp-li/.sp-ppl the On the Link checklist's page row and person row
+ *   .sp-ft         footer             .sp-done   the one coloured button
+ *
+ * The film's colour is on Done and nowhere else. */
+
+.fx-pop.sp{padding:0;width:420px;overflow:hidden}
+.sp-root{display:flex;flex-direction:column;max-height:min(660px,calc(100vh - 24px));color:var(--fx-ink)}
+.sp-body{overflow:auto;min-height:0;flex:1 1 auto;padding:0 16px 6px;overscroll-behavior:contain}
+
+/* head */
+.sp-h{display:flex;align-items:center;gap:10px;padding:16px 16px 12px}
+.sp-h b{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.sp-seg{display:inline-flex;margin-left:auto;padding:2px;border-radius:999px;font-size:13px;
+  background:color-mix(in srgb,var(--fx-ink) 6%,transparent);box-shadow:var(--fx-hair)}
+.sp-seg button{border:0;background:none;font:inherit;padding:4px 11px;border-radius:999px;color:var(--fx-ink-faint);cursor:pointer;white-space:nowrap}
+.sp-seg button:hover{color:var(--fx-ink-quiet)}
+.sp-seg button.on{background:var(--fx-pop-hi);color:var(--fx-ink);box-shadow:var(--fx-hair)}
+.sp-seg.sm{margin:0 0 2px}
+
+/* the link line */
+.sp-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+  background:color-mix(in srgb,var(--fx-ink) 5%,transparent);box-shadow:var(--fx-hair)}
+.sp-ic{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:8px;color:var(--fx-ink-faint);
+  background:color-mix(in srgb,var(--fx-ink) 8%,transparent)}
+.sp-ic.on{color:var(--fx-ink)}
+.sp-ic svg{display:block}
+.sp-t{flex:1;min-width:0;font-size:13px;line-height:1.4;color:var(--fx-ink-faint)}
+.sp-t>b{display:block;font-size:13px;font-weight:600;color:var(--fx-ink)}
+.sp-sub{color:var(--fx-ink-faint)}
+.sp-dd{-webkit-appearance:none;appearance:none;border:0;outline:0;font:inherit;color:var(--fx-ink-quiet);cursor:pointer;
+  background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2374747C' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right center;
+  padding:0 16px 0 0;max-width:100%;field-sizing:content}
+.sp-dd:hover:not(:disabled){color:var(--fx-ink)}
+.sp-dd:disabled{cursor:default;opacity:.7}
+.sp-dd.strong{font-size:13px;font-weight:600;color:var(--fx-ink)}
+.sp-dd.boxed{height:32px;padding:0 24px 0 10px;border-radius:9px;background-position:right 9px center;
+  background-color:color-mix(in srgb,var(--fx-ink) 8%,transparent);box-shadow:var(--fx-hair)}
+.sp-dd option{background:#202022;color:#EDEDF0}
+.sp-note{margin:7px 4px 0;font-size:13px;color:var(--fx-ink-faint);overflow-wrap:anywhere}
+.sp-set{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:10px 4px 0;font-size:13px;color:var(--fx-ink-quiet)}
+.sp-f{display:inline-flex;align-items:center;gap:8px}
+.sp-tick{position:relative;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.sp-tick input,.sp-li input,.sp-c input{position:absolute;opacity:0;width:16px;height:16px;margin:0;left:0;cursor:pointer}
+.sp-tick input:focus-visible+.fx-ck,.sp-li input:focus-visible+.fx-ck,.sp-c input:focus-visible+.fx-ck{
+  outline:2px solid color-mix(in srgb,var(--fx-tint) 75%,transparent);outline-offset:2px}
+
+/* buttons and fields */
+.sp-btn{display:inline-flex;align-items:center;justify-content:center;flex:none;height:28px;padding:0 12px;border:0;border-radius:999px;
+  background:color-mix(in srgb,var(--fx-ink) 9%,transparent);color:var(--fx-ink);font:inherit;font-size:13px;font-weight:600;
+  cursor:pointer;text-decoration:none;white-space:nowrap}
+.sp-btn:hover{background:color-mix(in srgb,var(--fx-ink) 15%,transparent)}
+.sp-btn:disabled{opacity:.5;cursor:default}
+.sp-in{height:32px;min-width:0;border:0;border-radius:9px;padding:0 10px;outline:0;font:inherit;font-size:13px;color:var(--fx-ink);
+  background:color-mix(in srgb,var(--fx-ink) 6%,transparent);box-shadow:var(--fx-hair)}
+.sp-in::placeholder{color:var(--fx-ink-faint)}
+.sp-in:focus{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--fx-tint) 55%,transparent)}
+.sp-in.slim{height:28px;width:128px}
+.sp-add{display:flex;align-items:center;gap:8px;margin:14px 0 4px}
+.sp-add .sp-in{flex:1}
+.sp-x{display:grid;place-items:center;flex:none;width:28px;height:28px;border:0;border-radius:8px;background:none;color:var(--fx-ink-faint);cursor:pointer}
+.sp-x:hover{background:var(--fx-pop-hi);color:var(--fx-ink)}
+
+/* people, invites, views */
+.sp-rows{display:flex;flex-direction:column}
+.sp-row{display:flex;align-items:center;gap:10px;min-height:46px;font-size:13px}
+.sp-av{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;font-size:13px;font-weight:600;color:var(--fx-ink-quiet);
+  background:color-mix(in srgb,var(--fx-ink) 10%,transparent)}
+.sp-av.quiet{background:none;box-shadow:var(--fx-hair);color:var(--fx-ink-faint)}
+.sp-who{flex:1;min-width:0;line-height:1.25}
+.sp-who b{display:block;font-weight:500;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-who small{display:block;font-size:13px;color:var(--fx-ink-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-owner{font-size:13px;color:var(--fx-ink-faint);padding-right:2px}
+.sp-sec{margin:16px 0 4px;font-size:11px;font-weight:600;color:var(--fx-ink-faint)}
+.sp-none{margin:10px 0;font-size:13px;color:var(--fx-ink-faint)}
+.sp-make{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 6px}
+.sp-make .sp-in{flex:1;min-width:120px;width:auto}
+.sp-chips{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 100%}
+.sp-chip{padding:2px 8px;border-radius:999px;font-size:13px;color:var(--fx-ink-quiet);background:color-mix(in srgb,var(--fx-ink) 8%,transparent)}
+.sp-say{margin:10px 0 0;font-size:13px;color:var(--fx-ink-quiet);overflow-wrap:anywhere}
+.sp-say.bad{color:#E5746A}
+
+/* footer */
+.sp-ft{display:flex;align-items:center;gap:8px;padding:12px 16px;margin-top:6px;flex:none;
+  border-top:1px solid color-mix(in srgb,var(--fx-ink) 8%,transparent)}
+.sp-count{margin-right:auto;font-size:13px;color:var(--fx-ink-faint)}
+.sp-done{height:32px;padding:0 18px;border:0;border-radius:999px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  background:var(--fx-tint);color:var(--sp-on,#fff)}
+.sp-done:hover{filter:brightness(1.08)}
+
+/* What Viewers See */
+.sp-lk{display:none;margin-left:auto;color:var(--fx-ink-faint);line-height:0}
+.sp-li:has(.vcb:not(:checked)) .sp-lk{display:inline-flex}
+.sp-li .sp-lk+small,.sp-li small+.sp-lk{margin-left:8px}
+.sp-vform{padding-bottom:4px}
+.sp-grp{margin:14px 0 2px;font-size:11px;font-weight:600;color:var(--fx-ink-faint)}
+.sp-li{position:relative;display:flex;align-items:center;gap:10px;min-height:30px;font-size:13px;color:var(--fx-ink-quiet);cursor:pointer}
+.sp-li small{margin-left:auto;font-size:13px;color:var(--fx-ink-faint)}
+.sp-li.dim .sp-nm{color:var(--fx-ink-faint)}
+.sp-nm{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.sp-nm small{display:block;margin:0;font-size:13px;color:var(--fx-ink-faint)}
+.sp-ppl{display:grid;grid-template-columns:1fr 54px 54px;align-items:center;min-height:34px;font-size:13px;color:var(--fx-ink-quiet)}
+.sp-ppl.dim .sp-nm{color:var(--fx-ink-faint)}
+.sp-ppl.dim .sp-c:last-child{opacity:.4}
+.sp-pplh{min-height:22px;font-size:11px;color:var(--fx-ink-faint)}
+.sp-pplh span+span{text-align:center}
+.sp-c{position:relative;justify-self:center;display:grid;place-items:center;width:24px;height:24px;cursor:pointer}
+.sp-c input{left:4px;top:4px}
+.sp-part[hidden]{display:none}
+
+/* a phone: the shared bottom sheet (feel.sheet draws the sheet, scrim and
+   handle; these are what is inside it). Everything here is under .spsheet, which
+   share.js gives the sheet only on a phone, so none of it reaches the desk. */
+.spsheet .sp-root{max-height:none;flex:1 1 auto;min-height:0;overflow:hidden}
+.spsheet .sp-in,.spsheet .sp-dd,.spsheet .sp-dd.strong{font-size:16px}
+.spsheet .sp-t{font-size:13px}
+.spsheet .sp-btn{height:36px;padding:0 14px;font-size:13px}
+.spsheet .sp-done{height:44px;padding:0 28px;font-size:15px}
+.spsheet .sp-in{height:44px}.spsheet .sp-in.slim{height:40px}
+.spsheet .sp-dd.boxed{height:44px}
+.spsheet .sp-row{min-height:54px}
+.spsheet .sp-li{min-height:44px}
+.spsheet .sp-ppl{min-height:44px;grid-template-columns:1fr 54px 54px}
+.spsheet .sp-c{width:44px;height:44px}.spsheet .sp-c input{left:14px;top:14px}
+.spsheet .sp-body{padding:0 16px 6px}
+.spsheet .sp-ft{padding:10px 16px}
+
+/* the head leads with the film: its mark in its colour, its name, and one line
+   saying who can open it (which opens General Access) */
+.spsheet .sp-hp{padding:2px 6px 8px 18px;gap:12px}
+.spsheet .sp-film{display:grid;place-items:center;flex:none;width:30px;height:30px}
+.spsheet .sp-film svg{width:26px;height:26px;display:block}
+.spsheet .sp-film-t{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px}
+.spsheet .sp-film-t b{max-width:100%;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spsheet .sp-who2{border:0;background:none;padding:2px 0;margin:0;font:inherit;font-size:13px;color:var(--fx-ink-faint);cursor:pointer;text-align:left}
+.spsheet .sp-who2:active,.spsheet .sp-who2[aria-expanded="true"]{color:var(--fx-ink)}
+.spsheet .sp-segrow{padding:0 16px 10px}
+.spsheet .sp-segrow .sp-seg{display:flex;margin:0;width:100%;padding:3px;font-size:13px}
+.spsheet .sp-segrow .sp-seg button{flex:1;padding:8px 12px}
+
+/* Copy Link: a full-width row of its own */
+.spsheet .sp-copyrow{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;min-height:52px;margin:10px 0 0;padding:8px 14px;
+  border:0;border-radius:12px;cursor:pointer;text-align:left;font:inherit;color:var(--fx-ink);
+  background:color-mix(in srgb,var(--fx-ink) 8%,transparent);box-shadow:var(--fx-hair)}
+.spsheet .sp-copyrow:active{background:color-mix(in srgb,var(--fx-ink) 14%,transparent)}
+.spsheet .sp-copyrow .sp-t{color:var(--fx-ink-faint);font-size:13px}
+.spsheet .sp-copyrow .sp-t b{font-size:16px}
+.spsheet .sp-copyrow .sp-t small{display:block;font-size:13px}
+.spsheet .sp-ic{width:32px;height:32px;border-radius:9px}

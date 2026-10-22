@@ -1,0 +1,54 @@
+{
+  "about": [
+    "The bucket's layout, named once. The relay writes it, the hub reads it,",
+    "refresh.py writes one file into it, and the Mac and phone apps put and",
+    "fetch through the relay's routes. Every one of them used to spell these",
+    "paths itself, and the poster that turned JPEG on the Mac a day before the",
+    "hub asked for anything but PNG is what that produces.",
+    "JS readers import relay/layout.js; Python reads this file; the Swift twins",
+    "and the courier are checked against it by relay/checks.sh until they read it.",
+    "Names inside a film — a log's, a mark's, a picture's — are the engine's",
+    "(engine/src/package.rs); the patterns here repeat them so the relay can",
+    "refuse a made-up path, and the battery checks the two still agree."
+  ],
+  "prefix": "p/",
+  "manifest": "manifest.json",
+  "logs": "logs/",
+  "media": "media/",
+  "devices": "devices/",
+  "gone": "gone/",
+  "kept": "kept/",
+  "names": {
+    "log": "^[0-9a-f]{16}-[0-9a-f]{16}\\.log$",
+    "mark": "^[0-9a-f]{16}-[0-9a-f]{16}\\.device$",
+    "fold": "^[0-9a-f]{16}\\.folded$",
+    "medium": "^[0-9a-f]{32}\\.[A-Za-z0-9]{1,8}$",
+    "picture": "^[0-9a-f]{32}\\.(jpg|jpeg|png|gif|webp)$",
+    "project": "^[0-9a-f]{8,64}$"
+  },
+  "engine": {
+    "manifest": "manifest.json",
+    "logExtension": "log",
+    "markExtension": "device",
+    "foldExtension": "folded"
+  },
+  "poster": {
+    "extension": "jpg",
+    "before": "png"
+  },
+  "cover": "media/cover.png",
+  "coverFor": "media/cover-{slug}.png",
+  "icon": "media/icon.png",
+  "hub": {
+    "people": "people.json",
+    "front": "front.json",
+    "visible": "visible.json",
+    "down": "down.json",
+    "views": "views.json",
+    "portal": "portal.json",
+    "pages": "pages/",
+    "docs": "docs/",
+    "decks": "decks/",
+    "press": "press/"
+  }
+}

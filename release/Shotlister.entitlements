@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    Deliberately empty.
+
+    The app is not sandboxed and never will be: ARCHITECTURE.html §11 rules the
+    Mac App Store out because sandboxing fights arbitrary folders, Tailscale and
+    a local MCP. Outside the sandbox an entitlement is a hole cut in the
+    hardened runtime, not a permission gained, so the right number of them is
+    none until something actually fails without one.
+
+    Two things that look like they need one and do not: ScreenCaptureKit, which
+    the checking harness uses to photograph the app, is gated by the user's
+    Screen Recording permission rather than by an entitlement; and Sparkle,
+    which on an unsandboxed app installs updates through a helper it signs and
+    ships itself.
+  -->
+</dict>
+</plist>

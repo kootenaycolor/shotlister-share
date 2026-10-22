@@ -1,0 +1,14 @@
+{
+  "name": "shotlister-relay",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The sync relay. Stores change logs and pictures; understands neither.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "checks": "./checks.sh"
+  },
+  "devDependencies": {
+    "wrangler": "^4.127.1"
+  }
+}

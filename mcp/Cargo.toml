@@ -1,0 +1,29 @@
+[package]
+name = "shotlister-mcp"
+version = "0.1.0"
+edition = "2021"
+description = "Lets Claude open and work on a Shotlister project."
+
+# **Storage is optional now, and that is the whole of what made this reachable
+# from anywhere** (2026-09-01). The tool layer never knew about folders except
+# through `films::Disk`; taking that out of the default build is what lets the
+# same tools compile to WebAssembly and run in a worker on his own
+# domain, with the relay's bucket standing in for the disk.
+[dependencies]
+shotlister-engine = { path = "../engine", default-features = false }
+shotlister-storage = { path = "../storage", optional = true }
+
+[features]
+default = ["disk"]
+# On disk, the Mac's MCP draws with the Film Set Objects pack inside its
+# pictures; the worker build leaves the pack out (see engine/Cargo.toml).
+disk = ["dep:shotlister-storage", "shotlister-engine/fso-art"]
+
+[lib]
+name = "shotlister_mcp"
+path = "src/lib.rs"
+
+[[bin]]
+name = "shotlister-mcp"
+path = "src/main.rs"
+required-features = ["disk"]

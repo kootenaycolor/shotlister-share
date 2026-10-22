@@ -1,0 +1,294 @@
+/* The feel of the portal: the pieces every page shares (moves 7 and 8 of
+ * design/29-portal-details). Loaded after hub.css and front.css on every page,
+ * with `feel.js` beside it. Build new things out of these; do not make another.
+ *
+ * ---- CLASS NAMES, FOR WHOEVER BUILDS NEXT ----------------------------------
+ *
+ *  Tokens (on :root)
+ *    --fx-tint        the film's colour (the page's --accent). Use it only for
+ *                     the current page marker, the next shoot day, and the one
+ *                     primary button. Never on a switch, a chip or a checkbox.
+ *    --fx-pop         a popover's surface            --fx-pop-hi  an item under the pointer
+ *    --fx-popsh       a popover's shadow             --fx-r-pop   a popover's radius (14px)
+ *    --fx-lift        a card's top light edge, hairline and long soft shadow
+ *    --fx-hair        a plain hairline               --fx-ease    the one easing curve
+ *
+ *  Popover (any floating menu or panel; no blur behind it, Escape closes it)
+ *    .fx-pop          the surface. Position it yourself, or let feel.pop() do it.
+ *    .fx-pop-sec      a small section heading inside it
+ *    .fx-pop-item     a row (a button or a link); .on = under the pointer or ticked
+ *    .fx-pop-item small / .fx-pop-key   the quiet text at the row's right end
+ *    .fx-pop-sep      a rule between groups
+ *    .fx-pop-field    a text box inside a popover
+ *    Existing menus wear the same look: .pmcard .pmitem (the ⋯ menus), .mecard,
+ *    .ctxmenu .ctxitem (right click, Library card menu), .bd-ctx (board).
+ *
+ *  Sheet (the phone's popover: feel.sheet(), a panel rising from the bottom)
+ *    .fx-sheet-scrim  the scrim            .fx-sheet       the sheet (rounded top, safe area)
+ *    .fx-sheet-grab   the grab handle      .fx-sheet-head  a title bar with .fx-sheet-x (close)
+ *    .fx-sheet-body   what you gave it (scrolls); .fx-sheet .fx-pop-item are 44px rows.
+ *    Draw it on a phone only: feel.phone() ? feel.sheet(box, opts) : feel.pop(anchor, box, opts).
+ *
+ *  Switch and tick (neutral, never the film's colour)
+ *    .fx-sw           a switch; add .on. It is a <span> or <i> of any size.
+ *    .fx-ck           a tick box; add .on.
+ *    Visibility's rows (.seerow), the ⋯ menu's switches (.pmswitch) and the
+ *    Library's ticks already wear this look.
+ *
+ *  Card surface
+ *    .fx-card         a card: the top light edge, hairline and long shadow.
+ *    Film cards, Library cards, the home's facts and spec sheets wear it.
+ *
+ *  Pictures (automatic: every <img> in the page; opt out with data-fx="off")
+ *    .fx-wait .fx-box .fx-in .fx-bad   states feel.js sets. Give a picture
+ *    data-fx-color="#334" to colour its placeholder with its own average colour,
+ *    and width/height attributes (or an aspect-ratio) to keep its box.
+ *
+ *  Tooltip (automatic: replaces the browser's title bubble)
+ *    data-tip="Find" data-key="⌘K" on any control. A plain title="..." is
+ *    turned into a data-tip. .fx-tip is the bubble.
+ *
+ *  Confirmation pill:  feel.toast("Saved") / feel.toast("Archived", { undo })
+ *    .fx-toast, .fx-toast button
+ *
+ *  Loading: the hairline is #pw-bar (wait.js); the page's shape is
+ *    .fh-waiting (deep.js); the page itself rises in ::view-transition-new(pane).
+ *  Focus: a ring in the film's colour on :focus-visible, on everything.
+ * -------------------------------------------------------------------------- */
+
+:root{
+  --fx-tint:var(--accent,#0A84FF);
+  --fx-pop:#202022;
+  --fx-pop-hi:#2B2B2E;
+  --fx-popsh:inset 0 1px 0 rgba(255,255,255,.06),0 0 0 1px rgba(255,255,255,.08),0 24px 60px -12px rgba(0,0,0,.8);
+  --fx-r-pop:14px;
+  --fx-lift:inset 0 1px 0 rgba(255,255,255,.05),0 0 0 1px rgba(255,255,255,.06),0 18px 40px -24px rgba(0,0,0,.9);
+  --fx-hair:inset 0 0 0 1px rgba(255,255,255,.06);
+  --fx-ease:cubic-bezier(.2,0,0,1);
+  --fx-ph:rgba(255,255,255,.05);
+  --fx-ink:#EDEDF0; --fx-ink-quiet:#A0A0A8; --fx-ink-faint:#74747C;
+  --fx-pill:#EDEDF0; --fx-pill-ink:#0E0E11; --fx-pill-quiet:#6A6A72;
+}
+/* The film's colour comes from whichever page is in front of you. */
+.fh2{--fx-tint:var(--accent,#0A84FF)}
+
+/* A page that is not front of house (the old tool pages) follows the system. */
+@media (prefers-color-scheme:light){
+  body:not(.fh2):not(:has(.fh2)){
+    --fx-pop:#fff; --fx-pop-hi:#F0F0F2;
+    --fx-popsh:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px rgba(0,0,0,.08),0 24px 60px -12px rgba(0,0,0,.25);
+    --fx-lift:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px rgba(0,0,0,.06),0 18px 40px -24px rgba(0,0,0,.25);
+    --fx-hair:inset 0 0 0 1px rgba(0,0,0,.08);
+    --fx-ph:rgba(0,0,0,.05);
+    --fx-ink:#1A1A1D; --fx-ink-quiet:#5C5C63; --fx-ink-faint:#8A8A92;
+    --fx-pill:#1A1A1D; --fx-pill-ink:#fff; --fx-pill-quiet:#A0A0A8;
+  }
+}
+
+/* Numbers line up: counts, dates, times, timecodes. */
+body,.fh2{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+/* ===========================================================================
+   Popovers: one surface, one radius, one shadow
+   =========================================================================== */
+.fx-pop,
+.fh2 .pmcard,.fh2 .mecard,.fh2 .ctxmenu,.fh2 .bd-ctx,.bd-ctx{
+  background:var(--fx-pop);border:0;border-radius:var(--fx-r-pop);box-shadow:var(--fx-popsh);
+  padding:6px;color:var(--fx-ink);
+  -webkit-backdrop-filter:none;backdrop-filter:none}
+.fx-pop{position:fixed;z-index:1000;min-width:200px;max-width:calc(100vw - 16px);font-size:var(--t-body,15px);
+  transform-origin:var(--fx-ox,50%) var(--fx-oy,0);animation:fx-pop-in .16s var(--fx-ease) both}
+@keyframes fx-pop-in{from{opacity:0;transform:scale(.97) translateY(-3px)}}
+.fh2 .pmcard,.fh2 .mecard,.fh2 .ctxmenu,.fh2 .bd-ctx{animation:fx-pop-in .16s var(--fx-ease) both}
+.fh2 .mecard{padding:13px 15px}
+
+.fx-pop-sec{font-size:11px;color:var(--fx-ink-faint);padding:10px 10px 4px;font-weight:600}
+.fx-pop-item,
+.fh2 .pmitem,.fh2 .ctxitem,.fh2 .bd-ctx button,.bd-ctx button{
+  display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;min-height:32px;padding:0 10px;
+  border:0;border-radius:8px;background:none;color:var(--fx-ink-quiet);cursor:pointer;text-align:left;
+  font:inherit;font-size:var(--t-label,12px);font-size:13px;text-decoration:none}
+.fx-pop-item:hover,.fx-pop-item.on,.fx-pop-item:focus-visible,
+.fh2 .pmitem:hover,.fh2 .ctxitem:hover:not(:disabled),.fh2 .ctxwrap:hover>.ctxitem,.fh2 .bd-ctx button:hover,.bd-ctx button:hover{
+  background:var(--fx-pop-hi);color:var(--fx-ink)}
+.fx-pop-item small,.fx-pop-key,.fh2 .bd-ctx button kbd{margin-left:auto;font-size:13px;color:var(--fx-ink-faint);font-weight:500}
+.fx-pop-sep,.fh2 .ctxsep,.fh2 .bd-ctx hr{height:1px;border:0;background:rgba(255,255,255,.07);margin:6px 4px}
+.fx-pop-field{display:flex;align-items:center;width:100%;height:36px;margin:2px 0 6px;padding:0 10px;border:0;
+  border-radius:9px;background:rgba(0,0,0,.35);box-shadow:var(--fx-hair);color:var(--fx-ink);font:inherit;font-size:13px;outline:0}
+.fx-pop-field:focus{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--fx-tint) 55%,transparent)}
+.fh2 .ctxsub{box-shadow:var(--fx-popsh)}
+/* The Library's selection bar is a floating panel too. */
+.fh2 .fh-bulk{background:var(--fx-pop);border:0;border-radius:var(--fx-r-pop);box-shadow:var(--fx-popsh)}
+/* Nothing behind a panel is blurred. */
+.shroud,.app .scrim,.popout{-webkit-backdrop-filter:none;backdrop-filter:none}
+@media (prefers-reduced-motion:reduce){.fx-pop,.fh2 .pmcard,.fh2 .mecard,.fh2 .ctxmenu,.fh2 .bd-ctx{animation:none}}
+
+/* ===========================================================================
+   Switches and ticks: neutral. The film's colour is not for these.
+   =========================================================================== */
+.fx-sw,.fh2 .pmswitch i{display:inline-block;position:relative;flex:none;width:28px;height:17px;border-radius:999px;
+  border:0;background:#3A3A40;box-shadow:none;
+  transition:background-color .18s var(--fx-ease)}
+.fx-sw::after,.fh2 .pmswitch i::after{content:"";position:absolute;top:2.5px;left:2.5px;width:12px;height:12px;border-radius:50%;
+  background:#8C8C94;transition:transform .18s var(--fx-ease),background-color .18s var(--fx-ease)}
+.fx-sw.on,.fh2 .pmswitch.on i{background:#EDEDF0}
+.fx-sw.on::after,.fh2 .pmswitch.on i::after{transform:translateX(11px);background:#0E0E11}
+.fh2 .pmswitch i,.fh2 .pmswitch.on i{background-image:none;border:0}
+.fh2 .pmswitch i{margin-left:auto}
+.fh2 .pmswitch.on i{background-color:#EDEDF0}
+/* Visibility's rows. */
+.fh2 .seerow:has(input[type=checkbox])::before{width:30px;height:18px;border:0;background-color:#3A3A40;
+  background-image:radial-gradient(circle,#8C8C94 6px,transparent 6.5px);background-size:14px 14px;background-position:2px center}
+.fh2 .seerow:has(input[type=checkbox]:checked)::before{background-color:#EDEDF0;border:0;
+  background-image:radial-gradient(circle,#0E0E11 6px,transparent 6.5px);background-position:calc(100% - 2px) center}
+.fh2 .seerow:has(input[type=radio]:checked)::before{background:#EDEDF0;border-color:#EDEDF0;box-shadow:inset 0 0 0 3.5px var(--card)}
+/* Ticks. */
+.fx-ck{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:5px;flex:none;
+  box-shadow:inset 0 0 0 1.5px #3A3A40;transition:background-color .15s}
+.fx-ck.on{background:#EDEDF0;box-shadow:none}
+.fx-ck.on::after{content:"";width:7px;height:4px;border-left:1.6px solid #0E0E11;border-bottom:1.6px solid #0E0E11;
+  transform:translateY(-1px) rotate(-45deg)}
+.fh2 button.frow.picked .tick{background:#EDEDF0;border-color:#EDEDF0;color:#0E0E11}
+.fh2 .fh-card.picked,.fh2 .fh-libpane[data-view="list"] .fh-card.picked{background:#26262A}
+.fh2 .fh-libpane .fh-card.picked{box-shadow:var(--fx-lift),inset 0 0 0 1.5px rgba(255,255,255,.32)}
+.fh2 .fh-libpane[data-view="list"] .fh-card.picked{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.2)}
+.fh2 .fh-pick input:checked{background:#EDEDF0;border-color:#EDEDF0}
+.fh2 .fh-pick input:checked::after{border-color:#0E0E11}
+.fh2 .fh-shelves a.on,.fh2 .fh-chip.on{box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);border-color:rgba(255,255,255,.28)}
+.fh2 .fh-pick input,.fh2 input[type=checkbox],.fh2 input[type=radio],.fh2 input[type=range],.fh2 progress{accent-color:#EDEDF0}
+/* The Share panel's and Visibility's ticks and switches (hub.css). */
+.tick input[type="checkbox"]:checked{background:#EDEDF0;border-color:#EDEDF0}
+.tick input[type="checkbox"]:checked::after{border-left-color:#0E0E11;border-bottom-color:#0E0E11}
+:is(.shroud, .fh2) .fh-visform .vcb:checked + .fh-vtrack{background-color:#EDEDF0;border-color:#EDEDF0;
+  background-image:radial-gradient(circle,#0E0E11 6.5px,transparent 7px)}
+.tscale input[type="range"]{accent-color:#EDEDF0}
+/* Filter chips are choices, so they are neutral. */
+.fh2 .fchip{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.14)}
+.fh2 .filterbtn.lit{border-color:rgba(255,255,255,.3)}
+.fh2 .fh-libfind:focus,.fh2 .seerow:has(input[type=text]:focus,input[type=url]:focus),.fh2 .fh-headrow:has(input[type=text]:focus){
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--fx-tint) 55%,transparent)}
+
+/* ===========================================================================
+   Card surfaces: the top light edge, the hairline, the long soft shadow
+   =========================================================================== */
+.fx-card,.fh2 .pcard,.fh2 .fh-fact,.fh2 .mate,.fh2 dl.spec,.fh2 .facts,.fh2 .fh-doc,.fh2 .pageact{box-shadow:var(--fx-lift)}
+.fx-card{background:var(--card,#1B1B1B);border-radius:var(--r-card,16px)}
+
+/* ===========================================================================
+   A visible focus ring, in the film's colour, for the keyboard only
+   =========================================================================== */
+:is(a,button,summary,input,select,textarea,label,[tabindex],[role=button],[role=menuitem]):focus-visible{
+  outline:2px solid color-mix(in srgb,var(--fx-tint) 75%,transparent);outline-offset:2px}
+:is(input,textarea):focus-visible{outline-offset:0}
+.fh2 .fx-pop-item:focus-visible{outline-offset:-2px}
+:focus:not(:focus-visible){outline:none}
+
+/* ===========================================================================
+   Arrival
+   =========================================================================== */
+/* The page rises 8px and fades in (`panein` in front.css); the rail does not
+   move for a sibling. */
+
+/* The page's shape, while the page is on its way: a heading, a line, a few
+   rows and a row of picture boxes, with one soft shimmer running across them. */
+.fh2 .fh-pane.fh-waiting::before{
+  height:430px;width:min(640px,76%);
+  background:linear-gradient(100deg,#0E0E11 30%,#1E1E22 50%,#0E0E11 70%) 0 0/300% 100%;
+  -webkit-mask:
+    linear-gradient(#000,#000) 0 0/42% 30px no-repeat,
+    linear-gradient(#000,#000) 0 44px/24% 11px no-repeat,
+    linear-gradient(#000,#000) 0 92px/32% 118px no-repeat,
+    linear-gradient(#000,#000) 50% 92px/32% 118px no-repeat,
+    linear-gradient(#000,#000) 100% 92px/32% 118px no-repeat,
+    linear-gradient(#000,#000) 0 246px/100% 13px no-repeat,
+    linear-gradient(#000,#000) 0 272px/90% 13px no-repeat,
+    linear-gradient(#000,#000) 0 298px/62% 13px no-repeat;
+          mask:
+    linear-gradient(#000,#000) 0 0/42% 30px no-repeat,
+    linear-gradient(#000,#000) 0 44px/24% 11px no-repeat,
+    linear-gradient(#000,#000) 0 92px/32% 118px no-repeat,
+    linear-gradient(#000,#000) 50% 92px/32% 118px no-repeat,
+    linear-gradient(#000,#000) 100% 92px/32% 118px no-repeat,
+    linear-gradient(#000,#000) 0 246px/100% 13px no-repeat,
+    linear-gradient(#000,#000) 0 272px/90% 13px no-repeat,
+    linear-gradient(#000,#000) 0 298px/62% 13px no-repeat;
+  animation:fx-shimmer 1.4s linear infinite}
+@keyframes fx-shimmer{to{background-position:-150% 0}}
+@media (prefers-reduced-motion:reduce){.fh2 .fh-pane.fh-waiting::before{animation:none}}
+
+/* Pictures keep their box, wear a neutral placeholder, and arrive with a
+   short blur-to-sharp, one a beat after another. */
+img.fx-wait{background-color:var(--fx-ph);color:transparent;font-size:0;
+  -webkit-user-drag:none}
+img.fx-box{aspect-ratio:var(--fx-ar,3/2);width:100%;height:auto}
+img.fx-in{animation:fx-arrive .8s var(--fx-ease) var(--fx-d,0s) backwards}
+@keyframes fx-arrive{from{opacity:0;filter:blur(12px);scale:1.035}to{opacity:1;filter:blur(0);scale:1}}
+/* A picture that would not load: its box and placeholder stay, and the browser's
+   broken-picture icon is replaced by a clear pixel. */
+img.fx-bad{content:url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==");
+  background-color:var(--fx-ph);color:transparent;font-size:0}
+@media (prefers-reduced-motion:reduce){img.fx-in{animation:fx-fade .2s linear both}}
+@keyframes fx-fade{from{opacity:0}}
+/* Pictures drawn as a background get the same neutral until they land. */
+.fh2 .pic{background-color:var(--fx-ph)}
+
+/* ===========================================================================
+   The confirmation pill
+   =========================================================================== */
+.fx-toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:2147483000;
+  display:flex;align-items:center;gap:14px;max-width:calc(100vw - 32px);padding:9px 16px;border-radius:999px;
+  background:var(--fx-pill);color:var(--fx-pill-ink);font:600 13px/1.2 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  box-shadow:0 12px 32px -8px rgba(0,0,0,.6);
+  transform:translate(-50%,10px);opacity:0;pointer-events:none;
+  transition:opacity .2s var(--fx-ease),transform .24s var(--fx-ease)}
+.fx-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.fx-toast button{border:0;background:none;padding:0;margin:0;font:inherit;color:var(--fx-pill-quiet);cursor:pointer}
+.fx-toast button:hover{color:var(--fx-pill-ink)}
+.fx-toast button:focus-visible{outline:2px solid var(--fx-pill-quiet);outline-offset:3px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){.fx-toast{transition:opacity .15s linear;transform:translate(-50%,0)}}
+/* On a phone the page's own bar stands at the bottom; the pill sits above it. */
+@media (max-width:700px),(max-height:480px) and (pointer:coarse){
+  .fh2 ~ .fx-toast,.fx-toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+}
+/* The older pill (ctx.js) is the same pill now. */
+.fh2 .ctxtoast{display:none}
+
+/* ===========================================================================
+   Tooltips that carry the shortcut
+   =========================================================================== */
+.fx-tip{position:fixed;z-index:2147483001;display:inline-flex;align-items:center;gap:8px;padding:5px 9px;border-radius:7px;
+  background:var(--fx-pill);color:var(--fx-pill-ink);font:600 13px/1.2 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  pointer-events:none;white-space:nowrap;opacity:0;transform:translateY(2px);
+  transition:opacity .12s var(--fx-ease),transform .12s var(--fx-ease);box-shadow:0 8px 20px -6px rgba(0,0,0,.5)}
+.fx-tip.on{opacity:1;transform:none}
+.fx-tip span{color:var(--fx-pill-quiet);font-weight:500}
+@media (prefers-reduced-motion:reduce){.fx-tip{transition:opacity .1s linear;transform:none}}
+
+/* ===========================================================================
+   Sheets: the phone's popover (feel.sheet). Drawn on a phone only: the
+   callers choose it with feel.phone(), so no rule here reaches the desk.
+   =========================================================================== */
+.fx-sheet-scrim{position:fixed;inset:0;z-index:1190;background:rgba(0,0,0,.45);animation:fx-sheet-fade .2s var(--fx-ease) both}
+.fx-sheet-scrim.out{opacity:0;transition:opacity .18s var(--fx-ease)}
+.fx-sheet{position:fixed;left:0;right:0;bottom:var(--fx-kb,0px);z-index:1200;display:flex;flex-direction:column;box-sizing:border-box;
+  max-height:calc(var(--fx-vh,100dvh) - 12px);width:100%;
+  background:var(--fx-pop);color:var(--fx-ink);border-radius:18px 18px 0 0;box-shadow:var(--fx-popsh);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);font-size:16px;
+  animation:fx-sheet-up .28s var(--fx-ease) both;outline:0;touch-action:manipulation}
+.fx-sheet.out{transform:translateY(105%);transition:transform .2s var(--fx-ease);animation:none}
+.fx-sheet.dragging{transition:none;animation:none}
+.fx-sheet-grab{flex:none;display:grid;place-items:center;height:22px;cursor:grab;touch-action:none}
+.fx-sheet-grab i{width:38px;height:5px;border-radius:999px;background:color-mix(in srgb,var(--fx-ink) 22%,transparent)}
+.fx-sheet-head{flex:none;display:flex;align-items:center;gap:10px;padding:0 8px 6px 18px;touch-action:none}
+.fx-sheet-head b{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fx-sheet-x{display:grid;place-items:center;flex:none;width:44px;height:44px;border:0;border-radius:50%;background:none;color:var(--fx-ink-faint);cursor:pointer}
+.fx-sheet-x:active{background:var(--fx-pop-hi);color:var(--fx-ink)}
+.fx-sheet-body{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.fx-sheet .fx-pop-item{min-height:44px;font-size:16px;padding:0 14px}
+.fx-sheet .fx-pop-field{height:44px;font-size:16px;margin:2px 0 8px;padding:0 14px;border-radius:12px}
+.fx-sheet .fx-pop-sec{padding:12px 14px 4px;font-size:13px}
+@keyframes fx-sheet-up{from{transform:translateY(100%)}}
+@keyframes fx-sheet-fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.fx-sheet,.fx-sheet-scrim{animation:none}.fx-sheet.out,.fx-sheet-scrim.out{transition:none}}
+/* The sheet takes focus itself when nothing inside should (no keyboard): no ring on the sheet. */
+.fx-sheet:focus,.fx-sheet:focus-visible{outline:0!important}

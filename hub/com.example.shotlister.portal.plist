@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.example.shotlister.portal</string>
+  <!-- The same update the double-click app runs, on a timer. His choice,
+       2026-09-02, after changing a film's icon in Notion and finding the web
+       still wearing the old one: the portal should keep up on its own.
+
+       On his Mac rather than in Cloudflare, deliberately. The Notion token
+       stays in his Keychain, where it already is; the alternative was putting
+       a token that reads his whole workspace into a worker. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/YOUR_USER/Developer/shotlister/hub/refresh.py</string>
+  </array>
+  <!-- **Every fifteen minutes.** A run that finds nothing changed says so and
+       stops; what it costs is three small reads against Notion. Notion is not
+       a thing he edits every ten seconds, and this is not the Drive bridge. -->
+  <key>StartInterval</key><integer>900</integer>
+  <key>RunAtLoad</key><true/>
+  <!-- **A launchd job gets none of his shell's path**, which is how the same
+       thing failed the first time it was run from a double-clicked app: node
+       is simply not a command. `wrangler` comes from the hub's own
+       `node_modules` and needs node beside it, and the engine is asked what
+       each film holds by way of `cargo`. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key><string>/Users/YOUR_USER/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>WorkingDirectory</key><string>/Users/YOUR_USER/Developer/shotlister</string>
+  <key>StandardOutPath</key><string>/Users/YOUR_USER/Library/Logs/shotlister-portal.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOUR_USER/Library/Logs/shotlister-portal.log</string>
+  <key>ProcessType</key><string>Background</string>
+  <key>LowPriorityIO</key><true/>
+  <key>Nice</key><integer>5</integer>
+</dict>
+</plist>

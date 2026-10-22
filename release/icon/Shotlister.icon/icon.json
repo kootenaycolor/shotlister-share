@@ -1,0 +1,8 @@
+{
+  "fill" : { "linear-gradient" : [ "extended-srgb:0.055,0.122,0.380,1.00", "extended-srgb:0.157,0.157,0.157,1.00" ] },
+  "groups" : [ { "layers" : [ { "image-name" : "mark.svg", "name" : "Mark" } ],
+                 "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+                 "specular" : true,
+                 "translucency" : {"enabled":true,"value":0.25} } ],
+  "supported-platforms" : { "circles" : [ "watchOS" ], "squares" : [ "iOS", "macOS" ] }
+}

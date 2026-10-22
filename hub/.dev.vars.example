@@ -1,0 +1,11 @@
+# Local checking only. Copy this file to hub/.dev.vars (which is gitignored)
+# before running hub/checks.sh. Nothing here is a real secret.
+HUB_DEV_EMAIL = "owner@example.com"
+
+# Signs the note that carries a verified address between the two hosts.
+# The real one is a wrangler secret; this is only for local runs.
+HUB_SECRET = "local-checking-secret-not-a-real-one"
+
+# Blank locally, on purpose: a local run has no Cloudflare Access in front of it.
+ACCESS_TEAM = ""
+ACCESS_AUD = ""

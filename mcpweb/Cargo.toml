@@ -1,0 +1,22 @@
+[package]
+name = "shotlister-mcpweb"
+version = "0.1.0"
+edition = "2021"
+description = "The MCP, in a worker. Change logs in, answers out, a change log back."
+
+# **The engine and the tool layer, and nothing else.** `shotlister-mcp` without
+# its `disk` feature is pure engine — no filesystem, no C boundary — which is
+# what lets the same tools run where there are no files.
+[dependencies]
+shotlister-engine = { path = "../engine", default-features = false }
+shotlister-mcp = { path = "../mcp", default-features = false }
+
+[lib]
+name = "shotlister_mcpweb"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"

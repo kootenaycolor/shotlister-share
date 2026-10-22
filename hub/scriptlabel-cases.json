@@ -1,0 +1,13 @@
+{
+  "about": "One rule for what a script draft is called, held by hub/scriptdrive.mjs (the portal and server), shared/DraftLabel.swift (Studio Mac and iPhone, checked by studio --labelcases) and projects-console/test_scriptlabel.py (the console). Stage 5 step 4, piece C.",
+  "cases": [
+    { "name": "Halcyon Pink", "came_from": "halcyon-pink.pdf", "dated": "2026-10-12T18:00:00Z", "label": "Halcyon Pink · Oct 12, 2026" },
+    { "name": "Revision (10/12/26, 11:00 AM)", "came_from": "Halcyon_Pink_Rev.pdf", "dated": "2026-10-12T18:00:00Z", "label": "Halcyon_Pink_Rev · Oct 12, 2026" },
+    { "name": "Revision (10/12/26, 11:00 AM)", "came_from": "", "dated": "2026-10-12T18:00:00Z", "label": "Revision (10/12/26, 11:00 AM) · Oct 12, 2026" },
+    { "name": "", "came_from": "", "dated": "", "label": "Script" },
+    { "name": "", "came_from": "/Users/x/Downloads/Blue Draft.PDF", "dated": "2026-10-13T05:30:00Z", "label": "Blue Draft · Oct 12, 2026" },
+    { "name": "  White  ", "came_from": "C:\\scripts\\white.pdf", "dated": "not a date", "label": "White" },
+    { "name": "Revision (1/1/26)", "came_from": "Lets Bake AV v3.pdf", "dated": "2026-01-01T08:00:00Z", "label": "Lets Bake AV v3 · Jan 1, 2026" },
+    { "name": "Shooting Script", "came_from": "x.pdf", "dated": "2026-03-08T09:59:00Z", "label": "Shooting Script · Mar 8, 2026" }
+  ]
+}

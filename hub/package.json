@@ -1,0 +1,14 @@
+{
+  "name": "shotlister-hub",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The collaborator hub. Wrangler is a local dependency so a checking run does not re-resolve it on every call — 0.8s a put instead of 35s.",
+  "type": "module",
+  "devDependencies": {
+    "@cloudflare/puppeteer": "^1.4.0",
+    "wrangler": "^4.86.0"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}

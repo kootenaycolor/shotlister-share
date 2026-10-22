@@ -1,0 +1,7 @@
+# The local checking bucket and what a run makes. Never the real bucket.
+state/
+shots/
+data/
+node_modules/
+package*.json
+wrangler.log

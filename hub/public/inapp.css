@@ -1,0 +1,22 @@
+/* The portal's pages inside the iPhone app (his trial, 2026-10-08).
+   `phoneWeb` marks the page `inapp`. The app has its own bar, its own way
+   back and its own tabs, so the portal's are put away; it reads only, so the
+   page's own editing bar goes too. What is left is the page. */
+.inapp .fh2 nav.rail,
+.inapp .fh2 .fh-topbar,
+.inapp .fh2 .fh-scrim,
+.inapp .fh2 .dock,
+.inapp .fh2 .deckbar,
+.inapp .fh2 .pageact { display: none !important; }
+
+.inapp .fh2 { padding-top: 0 !important; padding-bottom: 0 !important; }
+.inapp .fh2 .readerbar { top: 0 !important; }
+
+/* The app's bar is above the page, not over it: no room kept for a notch. */
+.inapp .fh-pane > .inner { padding-top: 14px; padding-bottom: 40px; }
+
+/* No hover in a finger's world: a link held is not a link to preview. */
+.inapp a { -webkit-touch-callout: none; }
+
+/* A look board reads only here: its adding and editing bar goes too. */
+.inapp .bd-dock { display: none !important; }

@@ -1,0 +1,21 @@
+[package]
+name = "shotlister-ffi"
+version = "0.1.0"
+edition = "2021"
+description = "The C boundary the Mac app calls across. One entry point, JSON out."
+
+# Deliberately thin. Everything it can do, the engine can already do — this only
+# decides how to say it in a language Swift can hear. No new rules live here.
+[dependencies]
+shotlister-engine = { path = "../engine" }
+shotlister-storage = { path = "../storage" }
+# **Without the courier.** That half carries files by running `curl`, which is
+# right for a Mac and is simply not a thing on iOS — and this one library is
+# built for both. The app does its own transfers with URLSession; what comes
+# across from here is only the *decision* about what should move.
+shotlister-remote = { path = "../remote", default-features = false, features = ["local"] }
+
+[lib]
+name = "shotlister_ffi"
+path = "src/lib.rs"
+crate-type = ["staticlib", "rlib"]

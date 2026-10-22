@@ -1,0 +1,461 @@
+{
+ "entries": [
+  {
+   "text": "Alexa 35",
+   "entries": [
+    {
+     "label": "",
+     "value": "Alexa 35"
+    }
+   ]
+  },
+  {
+   "text": "A Cam: Alexa 35\nB Cam: FX3",
+   "entries": [
+    {
+     "label": "A Cam",
+     "value": "Alexa 35"
+    },
+    {
+     "label": "B Cam",
+     "value": "FX3"
+    }
+   ]
+  },
+  {
+   "text": "1.85:1",
+   "entries": [
+    {
+     "label": "",
+     "value": "1.85:1"
+    }
+   ]
+  },
+  {
+   "text": "2.00 : 1",
+   "entries": [
+    {
+     "label": "",
+     "value": "2.00 : 1"
+    }
+   ]
+  },
+  {
+   "text": "1.43:1 / 1.90:1",
+   "entries": [
+    {
+     "label": "",
+     "value": "1.43:1 / 1.90:1"
+    }
+   ]
+  },
+  {
+   "text": "B-Camera: S-Log3\n\nAWG4/LogC4",
+   "entries": [
+    {
+     "label": "B-Camera",
+     "value": "S-Log3"
+    },
+    {
+     "label": "",
+     "value": "AWG4/LogC4"
+    }
+   ]
+  },
+  {
+   "text": "50mm: odd",
+   "entries": [
+    {
+     "label": "",
+     "value": "50mm: odd"
+    }
+   ]
+  },
+  {
+   "text": "Night: KC_Night.cube",
+   "entries": [
+    {
+     "label": "Night",
+     "value": "KC_Night.cube"
+    }
+   ]
+  },
+  {
+   "text": "A really quite long label here: x",
+   "entries": [
+    {
+     "label": "",
+     "value": "A really quite long label here: x"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "fields": {
+    "Camera": "Alexa Mini LF",
+    "Shooting Format": "4.3K LF 16:9 UHD",
+    "Codec": "ProRes 4444",
+    "Frame Rate": "23.976",
+    "Frame Guides": "1:1"
+   },
+   "lenses": "Signature Primes",
+   "multi": false,
+   "cameras": [
+    {
+     "label": "",
+     "name": "Alexa Mini LF",
+     "fields": {
+      "Camera": "Alexa Mini LF"
+     },
+     "lenses": []
+    }
+   ],
+   "shared": {
+    "Shooting Format": "4.3K LF 16:9 UHD",
+    "Codec": "ProRes 4444",
+    "Frame Guides": "1:1",
+    "Frame Rate": "23.976"
+   },
+   "lenses_shared": [
+    "Signature Primes"
+   ],
+   "unmatched": []
+  },
+  {
+   "fields": {
+    "Camera": "A Cam: Alexa 35\nB Cam: FX3",
+    "Shooting Format": "A Cam: 4.6K 16:9\nB-Camera: 4K UHD",
+    "Codec": "ProRes 4444",
+    "Color Space": "A cam: AWG4/LogC4\nFX3: S-Gamut3.Cine/S-Log3",
+    "Frame Rate": "24",
+    "Frame Guides": "1.85:1"
+   },
+   "lenses": "A Cam: Cooke S4/i — 18, 25, 32mm — T2\nB Cam: Sony G Master — 24-70\nAtlas LF 1.6x Extender",
+   "multi": true,
+   "cameras": [
+    {
+     "label": "A Cam",
+     "name": "Alexa 35",
+     "fields": {
+      "Shooting Format": "4.6K 16:9",
+      "Color Space": "AWG4/LogC4",
+      "Camera": "Alexa 35"
+     },
+     "lenses": [
+      "A Cam: Cooke S4/i — 18, 25, 32mm — T2"
+     ]
+    },
+    {
+     "label": "B Cam",
+     "name": "FX3",
+     "fields": {
+      "Shooting Format": "4K UHD",
+      "Color Space": "S-Gamut3.Cine/S-Log3",
+      "Camera": "FX3"
+     },
+     "lenses": [
+      "B Cam: Sony G Master — 24-70"
+     ]
+    }
+   ],
+   "shared": {
+    "Codec": "ProRes 4444",
+    "Frame Guides": "1.85:1",
+    "Frame Rate": "24"
+   },
+   "lenses_shared": [
+    "Atlas LF 1.6x Extender"
+   ],
+   "unmatched": []
+  },
+  {
+   "fields": {
+    "Camera": "FX3\nFX6",
+    "Codec": "FX6: XAVC-I\nXAVC S-I",
+    "Desqueeze": "C Cam: 1.5x"
+   },
+   "lenses": "",
+   "multi": true,
+   "cameras": [
+    {
+     "label": "",
+     "name": "FX3",
+     "fields": {
+      "Camera": "FX3"
+     },
+     "lenses": []
+    },
+    {
+     "label": "",
+     "name": "FX6",
+     "fields": {
+      "Codec": "XAVC-I",
+      "Camera": "FX6"
+     },
+     "lenses": []
+    }
+   ],
+   "shared": {
+    "Codec": "XAVC S-I"
+   },
+   "lenses_shared": [],
+   "unmatched": [
+    {
+     "key": "Desqueeze",
+     "label": "C Cam",
+     "value": "1.5x"
+    }
+   ]
+  },
+  {
+   "fields": {
+    "Camera": "Alexa35",
+    "Color Space": "AWG4/LogC4"
+   },
+   "lenses": "Principle: Tribe7 Blackwings T-Tuned\nPickups: Zeiss Superspeed",
+   "multi": false,
+   "cameras": [
+    {
+     "label": "",
+     "name": "Alexa35",
+     "fields": {
+      "Camera": "Alexa35"
+     },
+     "lenses": []
+    }
+   ],
+   "shared": {
+    "Color Space": "AWG4/LogC4"
+   },
+   "lenses_shared": [
+    "Principle: Tribe7 Blackwings T-Tuned",
+    "Pickups: Zeiss Superspeed"
+   ],
+   "unmatched": []
+  },
+  {
+   "fields": {
+    "Camera": "A Cam: Alexa 35\nB Cam: Sony FX3",
+    "Color Space": "A Cam: AWG4/LogC4\nFX3: S-Gamut3.Cine/S-Log3"
+   },
+   "lenses": "",
+   "multi": true,
+   "cameras": [
+    {
+     "label": "A Cam",
+     "name": "Alexa 35",
+     "fields": {
+      "Color Space": "AWG4/LogC4",
+      "Camera": "Alexa 35"
+     },
+     "lenses": []
+    },
+    {
+     "label": "B Cam",
+     "name": "Sony FX3",
+     "fields": {
+      "Color Space": "S-Gamut3.Cine/S-Log3",
+      "Camera": "Sony FX3"
+     },
+     "lenses": []
+    }
+   ],
+   "shared": {},
+   "lenses_shared": [],
+   "unmatched": []
+  },
+  {
+   "fields": {
+    "Camera": "A Cam: FX3\nB Cam: FX6",
+    "Frame Rate": "A Cam: 23.976\nB Cam: 59.94",
+    "Codec": "XAVC S-I"
+   },
+   "lenses": "",
+   "multi": true,
+   "cameras": [
+    {
+     "label": "A Cam",
+     "name": "FX3",
+     "fields": {
+      "Frame Rate": "23.976",
+      "Camera": "FX3"
+     },
+     "lenses": []
+    },
+    {
+     "label": "B Cam",
+     "name": "FX6",
+     "fields": {
+      "Frame Rate": "59.94",
+      "Camera": "FX6"
+     },
+     "lenses": []
+    }
+   ],
+   "shared": {
+    "Codec": "XAVC S-I"
+   },
+   "lenses_shared": [],
+   "unmatched": []
+  },
+  {
+   "fields": {
+    "Camera": "A Cam: FX3\nB Cam: FX6",
+    "Frame Rate": "23.978"
+   },
+   "lenses": "",
+   "multi": true,
+   "cameras": [
+    {
+     "label": "A Cam",
+     "name": "FX3",
+     "fields": {
+      "Camera": "FX3"
+     },
+     "lenses": []
+    },
+    {
+     "label": "B Cam",
+     "name": "FX6",
+     "fields": {
+      "Camera": "FX6"
+     },
+     "lenses": []
+    }
+   ],
+   "shared": {
+    "Frame Rate": "23.978"
+   },
+   "lenses_shared": [],
+   "unmatched": []
+  }
+ ],
+ "luts": [
+  {
+   "files": [
+    {
+     "name": "letsbake_fb_logc3_to_709.aml",
+     "url": "https://s3/x.aml",
+     "link": false
+    },
+    {
+     "name": "https://drive.google.com/file/d/abc/view",
+     "url": "https://drive.google.com/file/d/abc/view",
+     "link": true
+    },
+    {
+     "name": "Night.cube",
+     "url": "https://example.com/night.cube",
+     "link": true
+    }
+   ],
+   "labels": "",
+   "rows": [
+    {
+     "label": "",
+     "shown": "letsbake_fb_logc3_to_709.aml"
+    },
+    {
+     "label": "",
+     "shown": "Drive link"
+    },
+    {
+     "label": "",
+     "shown": "Night.cube"
+    }
+   ],
+   "stray": []
+  },
+  {
+   "files": [
+    {
+     "name": "letsbake_fb_logc3_to_709.aml",
+     "url": "https://s3/x.aml",
+     "link": false
+    },
+    {
+     "name": "https://drive.google.com/file/d/abc/view",
+     "url": "https://drive.google.com/file/d/abc/view",
+     "link": true
+    },
+    {
+     "name": "Night.cube",
+     "url": "https://example.com/night.cube",
+     "link": true
+    }
+   ],
+   "labels": "Show LUT: letsbake_fb_logc3_to_709.aml\nDay: https://drive.google.com/file/d/abc/view\nOld: gone.cube",
+   "rows": [
+    {
+     "label": "Show LUT",
+     "shown": "letsbake_fb_logc3_to_709.aml"
+    },
+    {
+     "label": "Day",
+     "shown": "Drive link"
+    },
+    {
+     "label": "",
+     "shown": "Night.cube"
+    }
+   ],
+   "stray": [
+    "Old: gone.cube"
+   ]
+  },
+  {
+   "files": [
+    {
+     "name": "letsbake_fb_logc3_to_709.aml",
+     "url": "https://s3/x.aml",
+     "link": false
+    },
+    {
+     "name": "https://drive.google.com/file/d/abc/view",
+     "url": "https://drive.google.com/file/d/abc/view",
+     "link": true
+    },
+    {
+     "name": "Night.cube",
+     "url": "https://example.com/night.cube",
+     "link": true
+    }
+   ],
+   "labels": "night: night.cube",
+   "rows": [
+    {
+     "label": "",
+     "shown": "letsbake_fb_logc3_to_709.aml"
+    },
+    {
+     "label": "",
+     "shown": "Drive link"
+    },
+    {
+     "label": "night",
+     "shown": "Night.cube"
+    }
+   ],
+   "stray": []
+  }
+ ],
+ "suggest": [
+  {
+   "text": "FX3 / FX6",
+   "suggested": "A Cam: FX3\nB Cam: FX6"
+  },
+  {
+   "text": "Alexa 35",
+   "suggested": "Alexa 35"
+  },
+  {
+   "text": "A Cam: Alexa 35",
+   "suggested": "A Cam: Alexa 35"
+  },
+  {
+   "text": "Venice 2; FX3 + Ronin 4D",
+   "suggested": "A Cam: Venice 2\nB Cam: FX3\nC Cam: Ronin 4D"
+  }
+ ]
+}

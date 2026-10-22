@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Three frame corners and a plus, drawn flat and white.
+       Icon Composer paints the background and the glass; this file is the mark
+       and nothing else — no shadow, no shine, no rounded tile.
+
+       Measured off the 1024pt artwork, where the tile ran 100..923. The group
+       transform maps that tile onto the full canvas Icon Composer expects, so
+       every number below is the one taken from the drawing. -->
+  <g fill="#FFFFFF" transform="translate(512 512) scale(1.24423) translate(-511.5 -511.5)">
+    <!-- top left -->
+    <rect x="330" y="330" width="130" height="51"/>
+    <rect x="330" y="330" width="51"  height="130"/>
+    <!-- top right -->
+    <rect x="564" y="330" width="130" height="51"/>
+    <rect x="643" y="330" width="51"  height="130"/>
+    <!-- bottom left -->
+    <rect x="330" y="564" width="51"  height="130"/>
+    <rect x="330" y="643" width="130" height="51"/>
+    <!-- the plus, in the fourth corner -->
+    <rect x="564" y="643" width="209" height="51"/>
+    <rect x="643" y="564" width="51"  height="209"/>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+[package]
+name = "shotlister-storage"
+version = "0.1.0"
+edition = "2021"
+description = "Reading and writing Shotlister projects on disk."
+
+# The one place in the project that touches the file system. The engine stays
+# free of it so the same code can run on the Mac, the phone and in a browser;
+# this is the shell that gives it somewhere to live.
+[dependencies]
+shotlister-engine = { path = "../engine" }

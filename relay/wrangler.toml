@@ -1,0 +1,69 @@
+# The relay, as Cloudflare needs it described.
+#
+# Two things are bound in: a bucket for the bytes, and a token so only his
+# devices can reach it. The token is a secret — it is never written here.
+# Locally it comes from `.dev.vars`; in the air it is set once with
+# `wrangler secret put TOKEN`.
+
+name = "shotlister-relay"
+main = "src/worker.js"
+compatibility_date = "2026-08-01"
+
+# **A name on a domain he owns, rather than one on `workers.dev`.**
+#
+# Not vanity. `workers.dev` is on public blocklists — Cloudflare Workers get
+# used for phishing, so filters blackhole the whole domain — and his own Pi-hole
+# already refuses it. The same lists run on hotel wifi and on production
+# networks, which is exactly where a phone is supposed to sync from. An address
+# a stranger's router can decide not to resolve is not an address to build on.
+#
+# It is also the link a director will eventually click, and `your-domain.example`
+# reads like a person where a workers.dev address reads like a scam.
+routes = [
+  { pattern = "sync.your-domain.example", custom_domain = true }
+]
+
+# Nothing here is a browser page, and an error should be a 500 with a line in
+# the log rather than a stack trace sent to whoever asked.
+workers_dev = true
+
+[observability]
+enabled = true
+
+# Cloudflare's own id for the uploaded version, so `/v1/version` can say it
+# beside our commit. The commit itself is not here: `relay/deploy.sh` passes
+# `COMMIT` and `DEPLOYED` as `--var`s on every deploy, so a stale value can
+# never be committed and then believed.
+[version_metadata]
+binding = "BUILD"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "shotlister"
+# `wrangler dev` uses a bucket of its own on this machine unless told otherwise,
+# so a check run can never reach the real one.
+preview_bucket_name = "shotlister-preview"
+
+# **The open line.** One Durable Object per film, holding a socket per device
+# that has it on screen, so a change reaches the others in about a second
+# instead of on their next five-minute check.
+#
+# A plain Worker cannot do this: every request may land in a different isolate,
+# so one has no way to reach the sockets another is holding. A Durable Object is
+# the one thing Cloudflare guarantees is a single place.
+#
+# It stores nothing. It cannot lose an edit because it never carries one — the
+# message is a single word, and what actually moved is worked out by the same
+# `syncplan` that always worked it out.
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+
+# **`new_sqlite_classes`, not `new_classes`.** The SQLite-backed kind is the one
+# available on the free plan; the older kind needs a paid Workers plan. This
+# object stores nothing either way, so the backing store is a formality — but
+# picking the wrong word here is a deploy that fails on his account and works on
+# somebody else's.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]

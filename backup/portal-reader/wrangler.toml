@@ -1,0 +1,12 @@
+# A READ-ONLY window onto the portal's storage, for backup/portal.sh.
+# It is never deployed: `wrangler dev` runs it on this Mac for the length of one
+# backup and talks to the real bucket through his own wrangler login.
+name = "shotlister-portal-reader"
+main = "read.js"
+compatibility_date = "2025-09-01"
+workers_dev = false
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "shotlister"
+remote = true

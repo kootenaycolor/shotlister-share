@@ -1,0 +1,16 @@
+# Which projects the bridge is allowed to touch.
+#
+# An allow-list rather than "everything in the Drive", because his projects
+# folder holds years of finished films whose locations folders are named however
+# they were named at the time, and a sync that wandered into them would be
+# rearranging work that is done.
+#
+# One project slug per line — the Drive folder's name, which is also what the
+# Shotlister project is called in lower case with dashes.
+#
+# His list, 2026-08-21: the ones in development.
+
+call-her-back
+pitch-deck
+zed
+jonas-on-edge

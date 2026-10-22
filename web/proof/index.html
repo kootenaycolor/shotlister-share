@@ -1,0 +1,118 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Stage 0 — the engine, in a browser</title>
+<style>
+  body { font: 14px/1.6 -apple-system, system-ui, sans-serif; margin: 0; padding: 24px; background:#f6f6f4; color:#1a1a19 }
+  h1 { font-size: 18px; font-weight: 500; margin: 0 0 4px }
+  .sub { color:#6b6b66; margin:0 0 20px }
+  .card { background:#fff; border:1px solid #e3e3de; border-radius:10px; padding:16px 18px; margin-bottom:14px; max-width:900px }
+  table { border-collapse: collapse; font-size:13px }
+  td { padding:3px 18px 3px 0; vertical-align:top }
+  td.k { color:#6b6b66 }
+  code { font: 12px/1.5 ui-monospace, Menlo, monospace; word-break:break-all }
+  .verdict { font-size:15px; font-weight:500; padding:12px 16px; border-radius:8px; max-width:900px; margin-bottom:14px }
+  .match { background:#e6f4ea; color:#12592b; border:1px solid #b7e0c4 }
+  .differ { background:#fceceb; color:#8a1c17; border:1px solid #f0bdb9 }
+  iframe { width:100%; height:560px; border:1px solid #e3e3de; border-radius:8px; background:#fff }
+</style>
+<h1>Stage 0 — the engine, in a browser</h1>
+<p class="sub">The film's change logs are fetched, replayed inside WebAssembly, and the result compared with what the Mac read from the same logs.</p>
+<div id="verdict" class="verdict">Reading…</div>
+<div class="card"><table id="out"></table></div>
+<div class="card"><div style="color:#6b6b66;margin-bottom:10px">Drawn by the engine, in the browser, from those logs:</div><iframe id="page"></iframe></div>
+<script>
+// What the Mac read from these same logs, written by web/proof.sh before it
+// served this page. Fetched rather than baked in, so this works for any film.
+let MAC;
+
+let wasm, mem;
+const bytesOf = () => new Uint8Array(mem.buffer);
+
+function put(str) {
+  const enc = new TextEncoder().encode(str);
+  const ptr = wasm.alloc(enc.length);
+  bytesOf().set(enc, ptr);
+  return [ptr, enc.length];
+}
+function take(ptr) {
+  const view = new DataView(mem.buffer);
+  const len = view.getUint32(ptr, true);
+  const str = new TextDecoder().decode(bytesOf().slice(ptr + 4, ptr + 4 + len));
+  wasm.free_result(ptr);
+  return str;
+}
+async function sha(str) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+(async () => {
+  MAC = await (await fetch('expected.json')).json();
+  const src = await WebAssembly.instantiateStreaming(fetch('shotlister_web.wasm'), {});
+  wasm = src.instance.exports;
+  mem = wasm.memory;
+
+  wasm.set_now(Date.now());
+  wasm.set_seed(Math.floor(Math.random() * 2 ** 53));
+  wasm.reset();
+
+  const names = await (await fetch('logs.json')).json();
+  names.sort();
+  const started = performance.now();
+  for (const name of names) {
+    const text = await (await fetch('logs/' + name)).text();
+    const [ptr, len] = put(text);
+    wasm.add_log(ptr, len);
+    wasm.dealloc(ptr, len);
+  }
+  wasm.settle();
+  const took = Math.round(performance.now() - started);
+
+  const summary = take(wasm.summary());
+  // The whole film, described exactly as the Mac app receives it — the payload
+  // every screen in the app is drawn from, and the one the hub will draw from.
+  const described = take(wasm.view(0));
+  const viewSha = await sha(described);
+  const viewBytes = new TextEncoder().encode(described).length;
+  const fingerprint = take(wasm.fingerprint());
+  const fpSha = await sha(fingerprint);
+  // Bytes, not JavaScript string length: the film has characters outside ASCII,
+  // and JS counts those as one unit where Rust counts two or three.
+  const fpBytes = new TextEncoder().encode(fingerprint).length;
+
+  const [kp, kl] = put('document');
+  const [bp, bl] = put('media');
+  const html = take(wasm.page(kp, kl, bp, bl));
+  wasm.dealloc(kp, kl); wasm.dealloc(bp, bl);
+
+  const same = summary === MAC.summary && fpSha === MAC.fpSha && fpBytes === MAC.fpBytes
+    && viewSha === MAC.viewSha && viewBytes === MAC.viewBytes;
+  const v = document.getElementById('verdict');
+  v.className = 'verdict ' + (same ? 'match' : 'differ');
+  v.textContent = same
+    ? 'Identical. The browser read this film exactly as the Mac did, and describes it in exactly the same words the app draws its screens from.'
+    : 'Different. The browser and the Mac do not agree.';
+
+  const rows = [
+    ['Logs read', names.length],
+    ['Time to replay', took + ' ms'],
+    ['Summary — browser', summary],
+    ['Summary — Mac', MAC.summary],
+    ['Fingerprint size — browser', fpBytes.toLocaleString() + ' bytes'],
+    ['Fingerprint size — Mac', MAC.fpBytes.toLocaleString() + ' bytes'],
+    ['Fingerprint hash — browser', fpSha],
+    ['Fingerprint hash — Mac', MAC.fpSha],
+    ['Description of the film — browser', viewBytes.toLocaleString() + ' bytes · ' + viewSha.slice(0, 32) + '…'],
+    ['Description of the film — Mac', MAC.viewBytes.toLocaleString() + ' bytes · ' + MAC.viewSha.slice(0, 32) + '…']
+  ];
+  document.getElementById('out').innerHTML = rows
+    .map(([k, val]) => `<tr><td class="k">${k}</td><td><code>${val}</code></td></tr>`)
+    .join('');
+
+  document.getElementById('page').srcdoc = html;
+})().catch(e => {
+  const v = document.getElementById('verdict');
+  v.className = 'verdict differ';
+  v.textContent = 'Failed: ' + e;
+});
+</script>

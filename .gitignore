@@ -1,0 +1,151 @@
+#env
+.env
+.env.*
+
+# Logs
+logs
+*.log
+# **Except a project's edits, which are .log files and are not logs.**
+# `*.log` came from the JavaScript prototype this repo started as, where it
+# meant crash logs. A Shotlister project keeps every edit ever made in
+# `changes/*.log`, so this quietly excluded the whole of the test film that
+# every check runs against: a clean copy of this repo opened it as "Untitled,
+# 0 scenes" and failed 120 of 134 checks with nothing wrong. Found 2026-08-23.
+!studio/fixtures/**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.env
+base44/.app.jsonc
+
+# Rust
+engine/target/
+**/*.rs.bk
+
+# generated samples
+engine/samples/
+
+storage/target/
+
+mcp/target/
+
+remote/target/
+
+# The browser build. Same reason as every other target/ here.
+web/target/
+
+# The relay's. `.dev.vars` holds the checking token; the real one is in his
+# Keychain and never in a file here.
+relay/node_modules/
+relay/.wrangler/
+relay/.dev.vars
+
+# The hub's. Same reason: it names a local identity for checking runs.
+hub/node_modules/
+hub/.wrangler/
+hub/.dev.vars
+hub/public/shotlister_web.wasm
+# Built by hub/build.sh from mcpweb/. The worker imports it; nothing edits it.
+hub/src/mcp.wasm
+
+# built app bundle
+build/
+ffi/target/
+
+# The phone's build output. project.yml is the readable source; the .xcodeproj
+# is generated from it on every build, so committing it would only ever be a
+# second opinion that goes stale.
+phone/Shotlister.xcodeproj/
+phone/build/
+phone/Info.plist
+
+# The Drive syncer's compiled binary. Built by bridge/build.sh; the source next
+# to it is the thing worth keeping.
+bridge/Shotlister Drive Sync.app/Contents/MacOS/
+
+# Python leaves these beside the fixture generator; they are build output.
+studio/fixtures/__pycache__/
+
+# Apple's App Store Connect API key — the credential Set Up Releasing asks him
+# to download. It only ever needs to touch his keychain via notarytool; it
+# must never touch a commit. Safety net, not the whole plan: he should move the
+# actual file out of the repo to somewhere private.
+*.p8
+
+mcpweb/target/
+__pycache__/
+
+# The deck editor's ad-hoc code signature: regenerated locally by decks/mac/build.sh,
+# and its hash is what macOS ties any grant to. Not meaningful to track.
+Deck Editor.app/Contents/_CodeSignature/
+decks/tools/__pycache__/
+
+# Wrangler's local account cache. It names his Cloudflare account id and is
+# written by any `wrangler` run at the repo root; nothing reads it back.
+.wrangler/
+
+# His real shot lists, kept here to check exports against. Reference material,
+# not source, and one file is 34 MB — it stays out of the history.
+export-references/
+
+# Claude Code worktrees and session files — never the repo's
+.claude/
+
+# The root-level Rust build folder, made by a `cargo build` run from the repo root.
+/target/
+
+# A wrangler misfire's leavings. `p/<project>/docs/<name>` is a key inside the
+# deck bucket, not a path on disk — a `wrangler r2 object get` that came back
+# empty wrote the key here as a folder instead. Nothing reads it.
+decks/tools/p/
+
+# ---- Secrets: never commit any of these (added for the shared copy) ----------
+# Apple keys (App Store Connect / notary), certificates and profiles
+*.p8
+*.p12
+*.cer
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile
+AuthKey_*
+# Wrangler / Cloudflare local secrets and account caches
+.dev.vars
+**/.dev.vars
+**/.wrangler/
+# Sparkle's signing key, if ever exported to a file
+*ed25519*
+sparkle_private_key*
+# Google sign-ins made by hub/drive-signin.py, or any saved token
+*credentials*.json
+*token*.json
+client_secret*.json
+# Local release / notary settings
+.config/
+release-notary*
+# Real films, backups, recordings and logs
+*.shotlist/
+!studio/fixtures/*.shotlist/
+*.mp4
+*.mov
+*.log
+!studio/fixtures/**/*.log

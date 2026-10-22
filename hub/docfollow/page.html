@@ -1,0 +1,165 @@
+<style>
+.olweb{--ink:#F3EFE9;--body:#CFC7BD;--gold:#D9A867;--quiet:#9A9189;
+  --rule:rgba(243,239,233,.13);--panel:rgba(243,239,233,.035);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;color:var(--body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.olweb *{box-sizing:border-box}
+.olweb .olin{max-width:1120px;margin:0 auto;padding:0 40px}
+.olweb p{margin:0}
+.olweb a{color:inherit}
+
+.olweb .lead{padding:56px 0 44px;border-bottom:1px solid var(--rule)}
+.olweb .toprow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.olweb .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.olweb .eyebrow .sl{color:var(--quiet);padding:0 .5em}
+.olweb .title{font-size:clamp(40px,7vw,76px);line-height:1;font-weight:600;color:var(--ink);
+  margin:22px 0 0;letter-spacing:-.015em}
+.olweb .sub{font-size:13px;letter-spacing:.04em;color:var(--quiet);margin-top:16px;
+  display:flex;flex-wrap:wrap;gap:4px 0}
+.olweb .sub span{white-space:nowrap}
+.olweb .sub span+span::before{content:"·";padding:0 .6em;opacity:.6}
+
+.olweb .docbtn{display:inline-flex;align-items:center;gap:.6em;font-size:11px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--gold);
+  border:1px solid rgba(217,168,103,.45);border-radius:999px;padding:10px 16px 10px 18px;
+  transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
+.olweb .docbtn .arr{font-size:13px;letter-spacing:0;transition:transform .2s}
+.olweb .docbtn:hover{background:var(--gold);color:#0A0A0A;border-color:var(--gold)}
+.olweb .docbtn:hover .arr{transform:translate(2px,-2px)}
+
+.olweb .block{padding:56px 0 8px}
+.olweb .label{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin:0 0 26px;display:flex;align-items:center;gap:14px}
+.olweb .label::after{content:"";flex:1;height:1px;background:var(--rule)}
+.olweb .label .count{color:var(--quiet);font-weight:500;letter-spacing:.1em}
+
+.olweb .logline{padding-top:64px}
+.olweb .block>p.logtext{margin:0;font-family:var(--serif);font-size:clamp(24px,3.2vw,38px);line-height:1.34;
+  color:var(--ink);max-width:23em;letter-spacing:-.005em;font-weight:400;text-wrap:pretty}
+.olweb .logtext::before{content:"\201C";color:var(--gold);margin-left:-.45em;padding-right:.05em}
+.olweb .logtext::after{content:"\201D";color:var(--gold);padding-left:.05em}
+
+.olweb .castgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.olweb .person{position:relative;background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  padding:22px 20px 20px;overflow:hidden}
+.olweb .person::before{content:"";position:absolute;left:0;top:0;right:0;height:2px;background:var(--c);opacity:.85}
+.olweb .pdot{display:none}
+.olweb .pname{font-family:var(--serif);font-size:28px;line-height:1.1;color:var(--ink)}
+.olweb .pbeside{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--quiet);margin-top:10px}
+.olweb .pcount{font-size:12px;color:var(--c);margin-top:18px;letter-spacing:.02em}
+
+.olweb .glance{background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  padding:22px 22px 14px;margin-bottom:40px}
+.olweb .glabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);font-weight:600;margin-bottom:14px}
+.olweb .glabel span{color:var(--quiet);font-weight:500;letter-spacing:.06em;text-transform:none;font-size:12px;padding-left:.6em}
+.olweb .gscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.olweb .glance table{border-collapse:collapse;width:100%;min-width:0}
+.olweb .glance th{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--quiet);padding:0 0 12px;text-align:center;white-space:nowrap}
+.olweb .glance th .dot{margin-right:6px;vertical-align:1px}
+.olweb .glance td{padding:9px 0;border-top:1px solid var(--rule);vertical-align:middle}
+.olweb .glance tr:hover td{background:rgba(243,239,233,.03)}
+.olweb .glance td.n{width:40px;font-size:12px;color:var(--gold);font-variant-numeric:tabular-nums;padding-left:4px}
+.olweb .glance td.t{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
+  padding-right:18px;line-height:1.35}
+.olweb .glance .who{width:82px;text-align:center}
+.olweb .glance .init{display:none}
+.olweb .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c,#8E867E)}
+.olweb .glance td .dot.on{width:10px;height:10px;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 18%,transparent)}
+.olweb .glance td .dot.off{width:4px;height:4px;background:rgba(243,239,233,.16)}
+
+.olweb .scene{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 8px;
+  padding:40px 0 36px;border-top:1px solid var(--rule)}
+.olweb .snum{font-family:var(--serif);font-size:40px;line-height:1;color:var(--gold);
+  font-variant-numeric:lining-nums tabular-nums;opacity:.9;padding-top:2px}
+.olweb .stitle{font-size:17px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink);margin:0;line-height:1.35;max-width:46em}
+.olweb .chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.olweb .chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--ink);
+  border:1px solid var(--rule);border-radius:999px;padding:4px 11px 4px 9px;background:var(--panel)}
+.olweb .sbody>p,.olweb .block>p,.olweb .sbody ul,.olweb .sbody ol,.olweb .block>ul,.olweb .block>ol{
+  font-size:17px;line-height:1.72;max-width:40em;margin:18px 0 0;text-wrap:pretty}
+.olweb .sbody li,.olweb .block li{margin:4px 0}
+.olweb .q{color:var(--ink)}
+.olweb strong{color:var(--ink);font-weight:600}
+.olweb em{font-family:var(--serif);font-style:italic;font-size:1.04em}
+
+.olweb .note{margin:22px 0 0;max-width:40em;padding:2px 0 2px 20px;border-left:2px solid rgba(217,168,103,.55)}
+.olweb .note p{font-family:var(--serif);font-style:italic;font-size:17.5px;line-height:1.6;color:#BFB6AB}
+.olweb .ask{margin:22px 0 0;max-width:40em;border:1px dashed rgba(217,168,103,.45);border-radius:3px;
+  padding:14px 18px 15px;background:rgba(217,168,103,.05)}
+.olweb .asklabel{display:block;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.olweb .ask p{font-size:15px;line-height:1.6;color:var(--ink)}
+.olweb .subhead{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin:30px 0 0}
+.olweb .pic{margin:24px 0 0;max-width:40em}
+.olweb .pic img,.olweb p img{max-width:100%;height:auto;display:block;border-radius:2px}
+.olweb .tbl{overflow-x:auto;margin:20px 0 0}
+.olweb .tbl table{border-collapse:collapse;font-size:14px}
+.olweb .tbl th,.olweb .tbl td{border-bottom:1px solid var(--rule);padding:8px 14px 8px 0;text-align:left;vertical-align:top}
+.olweb .tbl th{color:var(--ink);font-weight:600}
+
+.olweb .foot{margin-top:56px;padding:28px 0 64px;border-top:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.olweb .foot p{font-size:13px;color:var(--quiet);max-width:36em;line-height:1.55}
+
+@media (max-width:900px){
+  .olweb .olin{padding:0 28px}
+  .olweb .scene{grid-template-columns:72px minmax(0,1fr)}
+  .olweb .snum{font-size:32px}
+  .olweb .glance .who{width:56px}
+}
+@media (max-width:640px){
+  .olweb .olin{padding:0 16px}
+  .olweb .lead{padding:36px 0 32px}
+  .olweb .sub{gap:6px 16px}
+  .olweb .sub span+span::before{content:none}
+  .olweb .block{padding-top:44px}
+  .olweb .scene{grid-template-columns:1fr;padding:32px 0 28px}
+  .olweb .snum{font-size:26px;margin-bottom:10px}
+  .olweb .stitle{font-size:15px}
+  .olweb .sbody>p,.olweb .block>p{font-size:16px;line-height:1.68}
+  .olweb .castgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .olweb .person{padding:18px 14px 16px}
+  .olweb .pname{font-size:23px}
+  .olweb .glance{padding:16px 12px 8px;margin-left:-4px;margin-right:-4px}
+  .olweb .glance .who{width:26px}
+  .olweb .glance .full{display:none}
+  .olweb .glance .init{display:inline}
+  .olweb .glance th .dot{display:none}
+  .olweb .glance td.n{width:26px;padding-left:0}
+  .olweb .glance td.t{font-size:11px;padding-right:8px}
+  .olweb .docbtn{padding:9px 14px 9px 15px}
+}
+</style>
+<div class="olweb"><div class="olin">
+<header class="lead"><div class="toprow">
+<p class="eyebrow">Halcyon Check<span class="sl">//</span>outline</p>
+<a class="docbtn" href="https://docs.google.com/document/d/1CheckDocCheckDocCheckDocCheckDoc0/edit" target="_blank" rel="noopener">Open the Google Doc<span class="arr">↗</span></a>
+</div><h2 class="title">Outline</h2>
+<p class="sub"><span>Ivy’s working draft</span><span>updated 8 Oct 2026, 12:30 pm</span><span>3 scenes</span></p>
+</header>
+<section class="block">
+<h3 class="label">Halcyon</h3>
+<p>A <em>young</em> woman’s <span class="q">“big”</span> night out — she can’t say *why* &amp; it’s &lt;late&gt;.</p>
+</section>
+<section class="block cast"><h3 class="label">Characters</h3><div class="castgrid">
+<div class="person" style="--c:#E39A9A"><i class="pdot"></i><p class="pname">Gracie Ó’Brien</p><p class="pbeside">GEMMA</p><p class="pcount">0 scenes</p></div>
+<div class="person" style="--c:#93C3A3"><i class="pdot"></i><p class="pname">Ana-Lí</p><p class="pbeside">JO</p><p class="pcount">1 scene</p></div>
+</div>
+<p>Some extra note about the cast.</p>
+</section>
+<section class="block scenes">
+<h3 class="label">Scenes <span class="count">2</span></h3>
+<div class="glance"><p class="glabel">At a glance <span>who is in each scene</span></p><div class="gscroll"><table><thead><tr><th class="n"></th><th class="t"></th><th class="who" title="Gracie Ó’Brien"><i class="dot" style="--c:#E39A9A"></i><span class="full">Gracie Ó’Brien</span><span class="init">G</span></th><th class="who" title="Ana-Lí"><i class="dot" style="--c:#93C3A3"></i><span class="full">Ana-Lí</span><span class="init">A</span></th><th class="who" title="Gracie"><i class="dot" style="--c:#8E867E"></i><span class="full">Gracie</span><span class="init">G</span></th><th class="who" title="Ned"><i class="dot" style="--c:#8E867E"></i><span class="full">Ned</span><span class="init">N</span></th><th class="who" title="Zoë"><i class="dot" style="--c:#8E867E"></i><span class="full">Zoë</span><span class="init">Z</span></th></tr></thead><tbody><tr><td class="n">01</td><td class="t">INT. BAR — NIGHT</td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot on" style="--c:#93C3A3"></i></td><td class="who"><i class="dot on" style="--c:#8E867E"></i></td><td class="who"><i class="dot on" style="--c:#8E867E"></i></td><td class="who"><i class="dot off"></i></td></tr><tr><td class="n">02</td><td class="t">EXT. STREET - DAWN</td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot on" style="--c:#8E867E"></i></td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot on" style="--c:#8E867E"></i></td></tr></tbody></table></div></div>
+<article class="scene"><div class="snum">01</div><div class="sbody"><h4 class="stitle">INT. BAR — NIGHT</h4><div class="chips"><span class="chip"><i class="dot" style="--c:#8E867E"></i>Gracie</span><span class="chip"><i class="dot" style="--c:#93C3A3"></i>Ana-Lí</span><span class="chip"><i class="dot" style="--c:#8E867E"></i>Ned</span></div><p>She says <span class="q">“hello there”</span> and he says <span class="q">“<em>fine</em>”</span>. It’s Ned’s ‘turn’.</p><aside class="note"><p>A writer’s note in italics.</p></aside><aside class="ask"><span class="asklabel">Open question</span><p>Should this be day?</p></aside><aside class="ask"><span class="asklabel">Open question</span><p>Open question two</p></aside></div></article>
+<article class="scene"><div class="snum">02</div><div class="sbody"><h4 class="stitle">EXT. STREET - DAWN</h4><div class="chips"><span class="chip"><i class="dot" style="--c:#8E867E"></i>Gracie</span><span class="chip"><i class="dot" style="--c:#8E867E"></i>Zoë</span></div><ul><li>one <strong>bold</strong> item</li><li>two <a href="https://example.com/x?a=1&amp;b=2" target="_blank" rel="noopener">a link</a></li></ul><ol><li>first</li><li>second</li></ol><div class="tbl"><table><thead><tr><th>Col A</th><th>Col B</th></tr></thead><tbody><tr><td>a <span class="q">“x”</span></td><td>b_c_d</td></tr></tbody></table></div><figure class="pic"><img src="pic/71fde3856a298a052c6edb5155638d84.png" alt="" loading="lazy"></figure></div></article>
+</section>
+<section class="block scenes">
+<h3 class="label">Notes Section <span class="count">1</span></h3>
+<div class="glance"><p class="glabel">At a glance <span>who is in each scene</span></p><div class="gscroll"><table><thead><tr><th class="n"></th><th class="t"></th><th class="who" title="Gracie Ó’Brien"><i class="dot" style="--c:#E39A9A"></i><span class="full">Gracie Ó’Brien</span><span class="init">G</span></th><th class="who" title="Ana-Lí"><i class="dot" style="--c:#93C3A3"></i><span class="full">Ana-Lí</span><span class="init">A</span></th><th class="who" title="Gracie"><i class="dot" style="--c:#8E867E"></i><span class="full">Gracie</span><span class="init">G</span></th><th class="who" title="Ned"><i class="dot" style="--c:#8E867E"></i><span class="full">Ned</span><span class="init">N</span></th><th class="who" title="Zoë"><i class="dot" style="--c:#8E867E"></i><span class="full">Zoë</span><span class="init">Z</span></th></tr></thead><tbody><tr><td class="n">01</td><td class="t">small head with  pic</td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot off"></i></td><td class="who"><i class="dot off"></i></td></tr></tbody></table></div></div>
+<p>Plain para with _under_ and <em>em</em> and <em>_strong?_</em> and <strong><em>both</em></strong>.<br>Second line here.</p>
+<article class="scene"><div class="snum">03</div><div class="sbody"><h4 class="stitle">small head with  pic</h4><p>“unbalanced *quote<br>end”</p></div></article>
+</section>
+<footer class="foot"><p>This page follows Ivy’s Google Doc and redraws itself within a few minutes of every edit.</p><a class="docbtn" href="https://docs.google.com/document/d/1CheckDocCheckDocCheckDocCheckDoc0/edit" target="_blank" rel="noopener">Open the Google Doc<span class="arr">↗</span></a></footer>
+</div></div>

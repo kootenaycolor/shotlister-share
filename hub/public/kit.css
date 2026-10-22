@@ -1,0 +1,42 @@
+/* One look everywhere (after stage 5, item 7; mockup
+ * claude.ai/artifact/2yW2m9znRgMT1sZtRzJif7, section A).
+ *
+ * The portal's mirror of design/kit/kit.json: the one set of type, spacing,
+ * corners and colours every app draws with. tools/kitcheck.py fails if this
+ * drifts from kit.json. `hub.css` and `front.css` name their own tokens from
+ * these (`--t-*`, `--r-*`, the inks), so a change here moves the whole portal.
+ *
+ * Colours are given as the dark pair (`-d`) and the light pair (`-l`); each
+ * stylesheet picks the side it draws on. */
+:root {
+  --k-title: 28px;   --k-title-w: 650;
+  --k-heading: 20px; --k-heading-w: 650;
+  --k-row: 15px;     --k-row-w: 600;
+  --k-body: 13px;    --k-body-w: 400;
+  --k-label: 11px;   --k-label-w: 500;
+  --k-tag: 10px;     --k-tag-w: 600;
+
+  --k-display: 42px; --k-display-w: 650;
+  --k-section-wash-l: .10; --k-section-wash-d: .16;
+
+  --k-s1: 4px; --k-s2: 8px; --k-s3: 12px; --k-s4: 16px; --k-s5: 24px; --k-s6: 32px;
+
+  --k-r-tag: 5px; --k-r-control: 9px; --k-r-card: 11px; --k-r-panel: 18px; --k-r-pill: 999px;
+  --k-tag-pad: 2px 6px;
+  --k-row-min: 44px;
+
+  --k-ground-l: #E4E4E7;  --k-ground-d: #16161A;
+  --k-surface-l: #FFFFFF; --k-surface-d: #0E0E11;
+  --k-panel-l: #F2F2F4;   --k-panel-d: #1E1E22;
+  --k-raise-l: #FFFFFF;   --k-raise-d: #2E2E35;
+  --k-rule-l: #E8E8EB;    --k-rule-d: #232329;
+  --k-chip-l: #D9D9DE;    --k-chip-d: #3A3A40;
+  --k-ink-l: #17171A;     --k-ink-d: #EDEDF0;
+  --k-ink2-l: #5A5A61;    --k-ink2-d: #A0A0A8;
+  --k-ink3-l: #6E6E75;    --k-ink3-d: #8E8E96;
+  --k-ink4-l: #AEAEB5;    --k-ink4-d: #55555C;
+  --k-blue-l: #0A6CE8;    --k-blue-d: #0A84FF;
+  --k-red-l: #C0392B;     --k-red-d: #FF6B5E;
+  --k-amber-l: #9A6B10;   --k-amber-d: #FBBF24;
+  --k-green-l: #2F7A44;   --k-green-d: #4ADE80;
+}

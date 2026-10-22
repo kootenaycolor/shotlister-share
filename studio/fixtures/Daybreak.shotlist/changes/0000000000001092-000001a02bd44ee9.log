@@ -1,0 +1,7 @@
+shotlister-log 1
+W	1787441729257	0	1:1786941651372:0
+1787441729257	0	4242	S	01a00b57e8790941866a989900000000	vocab_size	l:t:ESTAB.t:Wt:Mt:M/OTSt:MCUt:CUt:CU/OTSt:INSERTt:ECUt:COWBOYt:FULLt:POVt:MWSt:W/TSt:TSt:W/OTSt:COWBOY/OTS
+1787441729257	1	4242	S	01a00b57e8790941866a989900000000	vocab_angle	l:t:Front Ont:3/4t:Profilet:Lowt:Hight:Top-Downt:Short-Sidedt:Eye Levelt:POVt:Ground Level
+1787441729257	2	4242	S	01a00b57e8790941866a989900000000	vocab_movement	l:t:Loose Pan/Tiltt:Statict:Tracking Forwardt:Tracking Backwardt:Push-Int:Pull-Outt:Feel the Forcet:Follow Actiont:Pant:Tilt
+1787441729257	3	4242	S	01a00b57e8790941866a989900000000	vocab_support	l:t:Handheldt:Stickst:Dana Dollyt:Hostess Trayt:Hood Mountt:Apple Boxest:On Groundt:Dollyt:Jibt:Gimbal
+1787441729257	4	4242	S	01a00b57e8790941866a989900000000	vocab_seeded	b:1

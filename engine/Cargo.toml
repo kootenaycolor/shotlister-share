@@ -1,0 +1,21 @@
+[package]
+name = "shotlister-engine"
+version = "0.1.0"
+edition = "2021"
+description = "Portable core for Shotlister: data model, change log, numbering, ordering."
+
+# Deliberately dependency-free for now. Serialization, media, and export land next
+# and will add narrow, audited dependencies only.
+[dependencies]
+
+# The Film Set Objects pack's pictures (9.6 MB) ride inside the engine the
+# Mac and iPhone carry. The portal's two browser/worker builds leave them out
+# (`default-features = false`) and point at the files instead: baked in, they
+# would make the portal's download ten times the size.
+[features]
+default = ["fso-art"]
+fso-art = []
+
+[lib]
+name = "shotlister_engine"
+path = "src/lib.rs"

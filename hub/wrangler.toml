@@ -1,0 +1,251 @@
+# The hub, as Cloudflare needs it described.
+#
+# **A second worker beside the relay, deliberately, not a few more routes on
+# it.** The relay has one rule about who may speak — one shared password, his
+# devices only — and that rule is what makes "a log may only ever grow" safe
+# without any idea of identity. The hub has people in it, roles, links that
+# expire. Putting those two in one file would mean every change to the hub's
+# permissions is a change to the thing his phone syncs through.
+#
+# They share the bucket and nothing else.
+
+name = "shotlister-hub"
+main = "src/worker.js"
+# **Older than the relay's on purpose.** The wrangler on this machine refuses
+# to start a local runtime for a date newer than it knows, and checking the hub
+# locally is worth more than a date nothing here needs.
+compatibility_date = "2026-05-01"
+# `nodejs_compat` is what Cloudflare's puppeteer needs to run in the worker.
+compatibility_flags = ["nodejs_compat"]
+
+# The plain domain, because this is the address a director is sent. `sync.` is
+# the relay's; this is the one a person reads.
+routes = [
+  { pattern = "your-domain.example", custom_domain = true },
+  # **The MCP, on a host of its own, and that is the whole reason it works.**
+  #
+  # Cloudflare Access stands in front of the apex and answers a request it does
+  # not recognise with a sign-in page — right for a person, useless for a
+  # program. An AI asking a question would be handed HTML telling it to check
+  # its email. So the MCP answers here, where there is no Access application,
+  # and does its own asking; when it needs to know who somebody is it sends
+  # their browser to the apex, where Access does know.
+  #
+  # **Do not put an Access application on this hostname.** Doing so breaks
+  # every AI connected to it, and the failure looks like a hang rather than a
+  # refusal.
+  { pattern = "mcp.your-domain.example", custom_domain = true },
+
+  # **Unlisted links, on a host of their own — and that is the whole point.**
+  #
+  # His model, 2026-09-01: a project is shared by a link that needs no sign-in,
+  # optionally behind a password. Cloudflare Access stands in front of the apex
+  # and answers a stranger with a sign-in page, which is exactly what an
+  # unlisted link must not do. So links are served from here, where there is no
+  # Access application, and the worker honours nothing but a key on this host —
+  # no assertion is read and every write is refused.
+  #
+  # **Do not put an Access application on this hostname.** Doing so turns every
+  # link he has ever sent into a sign-in prompt.
+  { pattern = "share.your-domain.example", custom_domain = true }
+]
+
+workers_dev = true
+
+# **Run beside the bucket, not beside the visitor.** Measured 2026-10-13: his
+# Mac reaches Cloudflare in Dublin, the bucket lives in western North America
+# (WNAM), and a page makes 8–44 bucket calls in a chain of three to six steps
+# at ~155 ms each across the Atlantic. One long hop to the worker and short
+# ones to the bucket beats many long ones. `hint` names the bucket's region.
+[placement]
+mode = "smart"
+hint = "wnam"
+
+[observability]
+enabled = true
+
+# **The portal's own clock, every two minutes** (`scheduled` in
+# `src/worker.js`). Pages that follow a Google Doc look at it on each tick
+# (`src/docfollow.js`, his ask of 2026-10-10) — the Mac's Doc Mirror agent did
+# this before, and only while the Mac was awake. A tick with nothing to do is
+# one small read.
+#
+# **And every minute** (`src/timer.js`, 2026-10-11): the Notion link, which ran
+# on the Studio Mac until the switch (`/console/studio/owner`) says "hub".
+# Until then it only looks, every ten minutes, and writes nothing. `scheduled`
+# tells the two apart by the schedule's own words, so keep them exactly so.
+# The same minute runs the portal's own refresh (`src/refreshhub.js`: cards
+# and link covers, what `refresh.py` did from the Mac) once its switch,
+# `/console/studio/owner/portal`, says "hub" — a pass every fifteen minutes,
+# two cards a minute.
+[triggers]
+crons = ["*/2 * * * *", "* * * * *"]
+
+# The same bucket the relay writes. The hub only ever reads from it in Stage 1;
+# the first thing it writes is the list of people on a film.
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "shotlister"
+preview_bucket_name = "shotlister-preview"
+
+# **The films' backups, in a bucket of their own** (`src/filmbackuprun.js`,
+# 2026-10-13). Point-in-time copies of each film's change logs, apart from the
+# live bucket so nothing that syncs or deletes there can reach them. Only the
+# backup code writes here, and only its 90-day tidy-up ever deletes. Locked by
+# Cloudflare's bucket lock rules: `daily/` for 90 days from each copy,
+# `forever/` indefinitely.
+#
+# **The bucket must exist before a deploy carries this binding**, or the
+# deploy is refused (nothing live breaks; it just does not go out):
+#
+#   npx wrangler@4 r2 bucket create shotlister-backups
+#   npx wrangler@4 r2 bucket lock add shotlister-backups daily-90-days daily/ --retention-days 90
+#   npx wrangler@4 r2 bucket lock add shotlister-backups forever forever/ --retention-indefinite
+[[r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "shotlister-backups"
+preview_bucket_name = "shotlister-backups-preview"
+
+# The client: the page, its stylesheet, and the engine compiled for a browser.
+# `hub/build.sh` puts the wasm here — it is built from `web/`, never edited.
+# **A stamp that changes on every deploy.** The stylesheet and the scripts are
+# served `max-age=0, must-revalidate`, which is supposed to mean a browser
+# checks every time — and browsers still hand back what they already have from
+# memory within a session. That cost an evening of "I deployed it and it looks
+# the same", twice, and it would cost him the same on his own machine. The
+# addresses carry this id, so a deploy is a different address and there is
+# nothing to reuse.
+# **The press, on the portal.** A real Chrome beside the worker, which prints
+# the sheets the editor published to a Letter PDF and files it under the
+# film's Documents — so his Mac no longer has to be on, and no longer needs
+# Full Disk Access to read his Drive. His ask, 2026-09-07.
+[browser]
+binding = "BROWSER"
+# In `wrangler dev` the browser is the real one on Cloudflare — there is no local
+# Chrome to stand in for it — so a print can be checked in the rig. Deploys
+# ignore this line.
+remote = true
+
+[version_metadata]
+binding = "BUILD"
+
+# **`COMMIT` and `DEPLOYED` are not in `[vars]` on purpose.** `hub/deploy.sh`
+# passes them as `--var`s on every deploy, so `/version` says the commit the
+# live hub really came from; written here they would be a number somebody
+# forgot to bump.
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# **The stylesheets and scripts come through the worker**, so one stamped with
+# this deploy can be marked keep-for-good (`keptForGood` in `src/worker.js`).
+# Everything else under `public/` is still served straight, as before.
+run_worker_first = ["/add.js","/arrange.js","/board.js","/boardpatch.js","/compare.js","/copy.js","/deck.js","/deep.js","/diagram.js","/feel.css","/feel.js","/film.js","/front.css","/hub.css","/jump.js","/look.js","/made.js","/rail.js","/reader.js","/seen.js","/share.js","/shelf.js","/side.css","/side.js","/wait.js"]
+
+[vars]
+# Where the press's Chrome fetches pictures and fonts from: this same worker on
+# its workers.dev address, which has no Cloudflare Access in front of it.
+PRESS_HOST = "https://shotlister-hub.YOUR_SUBDOMAIN.workers.dev"
+# **He is an editor on every film, always, even before any list of people
+# exists.** Without this the first person to open the hub would find nothing and
+# have no way to add themselves — the list of people can only be written by an
+# editor, and there would be none.
+#
+# **More than one address, his call 2026-09-01.** He signs in from a personal
+# and a work mailbox and either should be him; a hub that only knew one would
+# have met him as a stranger half the time. The cost is stated plainly rather
+# than buried: each address here is a key to every film, so a mailbox he loses
+# control of is access he loses control of.
+OWNER = "owner@example.com,owner@your-domain.example"
+
+# Cloudflare Access, once he has turned it on. Both blank means Access is not
+# wired up yet: the hub still runs, and secret links still work, but nobody can
+# sign in with an email. Filling these in is the last step of `hub/setup.sh`.
+#
+# ACCESS_TEAM is the name in `<team>.cloudflareaccess.com`.
+# ACCESS_AUD is the Application Audience tag Access shows for the application.
+ACCESS_TEAM = ""
+ACCESS_AUD = ""
+
+# **`HUB_SECRET` is a secret, not a var, so it is not here.** It signs the note
+# that carries a verified address from the apex to the MCP host and back. Set
+# once by `hub/setup.sh`:
+#
+#   openssl rand -hex 32 | npx wrangler@4 secret put HUB_SECRET
+#
+# Without it the MCP still answers `films` to nobody and refuses every sign-in
+# with one line, rather than pretending.
+
+# **`NOTION_TOKEN` is a secret too, and optional.** His pick of 2026-09-23
+# (Ref 1155): the portal's own Notion connection, so Refresh from Notion works
+# from his phone with the Mac asleep (`src/notion.js`). It is **not** the
+# Mac's key: it is a separate Notion integration, revoked in Notion in one
+# click. It began as Read Content only on four databases; **since 2026-10-10
+# it can write** (his yes, "Projects Console without the Mac" stage 1): the
+# server answers the phone's edits, keeps Notion and the records in step every
+# minute (`notionsync.js`), and makes New Project and New Shoot rows. Set it in the Cloudflare dashboard (Workers →
+# shotlister-hub → Settings → Variables and Secrets → Add, type Secret), or:
+#
+#   npx wrangler@4 secret put NOTION_TOKEN
+#
+# **Without it nothing changes**: no Refresh button is drawn, `/refresh` says
+# the portal is not connected, and `hub/refresh.py` on the Mac goes on doing
+# what it has always done — it is the other road, not the old one.
+#
+# **`GDRIVE` is a secret too, and optional** (`src/docfollow.js`, 2026-10-10):
+# a Google sign-in to owner@your-domain.example that can only **read**
+# Drive, so a page can follow a Google Doc (Halcyon's Outline). JSON of
+# `client_id`, `client_secret`, `refresh_token`, made once by
+# `hub/drive-signin.py`, which puts it here itself. Without it the Follow
+# Google Doc switch says the portal is not connected, and nothing else changes.
+#
+# `NOTION_API` exists only for `checks.sh`, which points it at a fake Notion
+# on this machine; `notion.js` ignores it unless it names localhost.
+
+# **No `[[rules]]` for the .wasm.** Wrangler already compiles any `*.wasm` a
+# module imports, and adding a rule of the same type without `fallthrough`
+# *replaces* the built-in one — which fails the build with a message about the
+# very file it was added for. `hub/src/mcp.wasm` is imported by `src/mcp.js`
+# and that is the whole of what it takes.
+
+# **The relay's rooms, so a change made by an AI reaches his Mac in a second
+# rather than on its next look.** One Durable Object per film, already there and
+# already doing this for his own devices; the hub only sends it the same single
+# word the relay does.
+#
+# Optional by construction: `mcp.js` checks the binding exists before using it,
+# so a hub deployed without the relay still works and the only cost is a few
+# minutes' delay.
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+script_name = "shotlister-relay"
+
+# **A live room for every board.** His ask, 2026-09-25: "live collaboration
+# features to the look board, so people can see changes in real time." One
+# Durable Object per board (`src/boardroom.js`): every change to the board goes
+# through it one at a time, so two people working at once both keep their
+# work, and it passes each change to everybody with the board open the moment
+# it is kept. The board itself stays in the bucket; the room keeps nothing.
+#
+# Optional by construction, like ROOMS: without the binding the board saves
+# the old way and asks every few seconds.
+[[durable_objects.bindings]]
+name = "BOARDS"
+class_name = "BoardRoom"
+
+[[migrations]]
+tag = "board-rooms"
+new_sqlite_classes = ["BoardRoom"]
+
+# **A brake on the share link's drawing** (his ask, 2026-10-17: editing the
+# Diagrams page publicly, guarded). With Editable by Link on, one address may
+# send at most this many batches of plan edits a minute (`src/linkedits.js`);
+# the worker keeps its own count too, so it is optional by construction.
+[[ratelimits]]
+name = "LINK_EDITS"
+namespace_id = "1017"
+
+  [ratelimits.simple]
+  limit = 120
+  period = 60

@@ -1,0 +1,531 @@
+/* The sidebar you edit in place, Add as a menu, and Seen On (moves 1, 2 and 4
+ * of design/29-portal-details). Loaded after feel.css, so the look of a
+ * popover, a switch and a pill is feel.css's; this only adds what is the
+ * sidebar's own.
+ *
+ * Rules held here:
+ *  - a row is plain: 30px, a rounded hover fill, no bullet, no box around a
+ *    heading's rows. The current page is a 2px sliver of the film's colour at
+ *    the rail's left edge and a soft fill. Nothing else on the rail uses the
+ *    film's colour except the drop line.
+ *  - everything that edits is hidden until the pointer is on it, and is not
+ *    drawn at all on a phone, where the sidebar is the navigation sheet.
+ *  - switches and tags are neutral.
+ */
+
+/* ===========================================================================
+   Pinned and Private: two switch rows at the top of a page's menu
+   =========================================================================== */
+.seenon{display:flex;flex-direction:column;gap:1px}
+.seenon .sn{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font:inherit;font-size:13px;font-weight:500;line-height:1;
+  padding:8px 8px;border:0;border-radius:7px;background:none;color:var(--fx-ink,#EDEDF0);cursor:pointer}
+.seenon .sn svg{flex:none;color:var(--fx-ink-faint,#74747C)}
+.seenon .sn .snw{flex:1}
+.seenon .sn:hover,.seenon .sn:focus-visible{background:var(--fx-pop-hi,#2B2B2E);outline:0}
+.seenon .sn:disabled{opacity:.7;cursor:default}
+.fh2 .ctxmenu{min-width:236px}
+.fh2 .ctxsec{font-size:11px;font-weight:600;color:var(--fx-ink-faint,#74747C);padding:10px 10px 4px}
+.fh2 .ctxnode{padding:2px 4px 6px}
+/* Archive, in a warm warning colour. */
+.fh2 .ctxitem.ctxwarn,.fh2 .ctxitem.ctxwarn:hover{color:#E08A50}
+
+/* Library cards: small neutral tags where a gold sentence was. */
+.fh2 .fh-cardstate{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;color:inherit}
+.fh2 .fh-tag{display:inline-block;font-size:11px;font-weight:500;line-height:1.5;padding:0 7px;border-radius:999px;
+  color:var(--quiet);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);white-space:nowrap}
+
+/* ===========================================================================
+   The sidebar, on a desk
+   =========================================================================== */
+@media (min-width:701px) and (not ((max-height:480px) and (pointer:coarse))){
+  .fh2 nav.rail .sections{padding:0 8px 12px}
+  .fh2 nav.rail .railtop{padding:16px 8px 8px}
+  .fh2 nav.rail .railtop .back{margin-left:3px}
+
+  /* No box around a heading's rows, no bullet before a row. */
+  .fh2 .sections>.group,.fh2 .sections>.libgroup{box-shadow:none;background:none}
+  .fh2 nav.rail .to .dot{display:none}
+  .fh2 nav.rail .to{position:relative;min-height:30px;padding:0 10px;gap:8px;border-radius:8px;color:var(--ink);-webkit-user-select:none;user-select:none}
+  .fh2 nav.rail .to:hover{background:rgba(255,255,255,.05);color:var(--loud)}
+  .fh2 nav.rail .to.on{background:rgba(255,255,255,.075);color:var(--loud)}
+  .fh2 nav.rail .libgroup{margin-bottom:4px;padding-bottom:6px;border-bottom:0}
+  .fh2 nav.rail .to .n{font-size:13px;color:var(--quiet)}
+
+  /* Headings */
+  .fh2 .grouphead{display:flex;align-items:center;gap:2px;height:28px;margin:12px 0 2px;padding:0 4px 0 10px;color:var(--quiet);position:relative}
+  .fh2 .grouphead .hname{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px 0 10px;border-radius:4px;cursor:pointer}
+  .fh2 .grouphead:hover{color:var(--ink)}
+  .fh2 .grouphead .hfold,.fh2 .grouphead .hplus,.fh2 .grouphead .hmore{
+    display:grid;place-items:center;flex:none;width:22px;height:22px;padding:0;border:0;border-radius:6px;background:none;
+    color:var(--quiet);cursor:pointer;opacity:0;transition:opacity .12s var(--fx-ease,ease),background .12s var(--fx-ease,ease)}
+  .fh2 .grouphead:hover .hfold,.fh2 .grouphead:hover .hplus,.fh2 .grouphead:hover .hmore,
+  .fh2 .grouphead.closed .hfold,.fh2 .grouphead:focus-within .hfold,.fh2 .grouphead:focus-within .hplus,.fh2 .grouphead:focus-within .hmore{opacity:1}
+  .fh2 .grouphead .hfold:hover,.fh2 .grouphead .hplus:hover,.fh2 .grouphead .hmore:hover{background:rgba(255,255,255,.08);color:var(--loud)}
+  .fh2 .grouphead .hfold svg{transition:transform .18s var(--fx-ease,ease)}
+  .fh2 .grouphead.closed .hfold svg{transform:rotate(-90deg)}
+  .fh2 .grouphead .hfold{position:absolute;left:-4px;top:3px}
+  .fh2 .grouphead .hplus{margin-left:auto}
+  .fh2 .group.folded{display:none}
+  .fh2 .grouphead:has(.inedit) .hplus,.fh2 .grouphead:has(.inedit) .hmore{display:none}
+
+  /* A row's ⋯ takes the place of its count and its tag while the pointer is on it. */
+  .fh2 nav.rail .to .rowmore{display:none;place-items:center;flex:none;margin-left:auto;width:22px;height:22px;margin-right:-6px;
+    border-radius:6px;color:var(--quiet)}
+  .fh2 nav.rail .to .rowmore:hover{background:rgba(255,255,255,.1);color:var(--loud)}
+  .fh2 nav.rail .to:hover .rowmore,.fh2 nav.rail .to:focus-visible .rowmore{display:grid}
+  .fh2 nav.rail .to:hover .n,.fh2 nav.rail .to:hover .off-tag{display:none}
+
+  /* Private (editors only): a small lock where the count sits, the count stays beside it. */
+  .fh2 nav.rail .to .off-tag{display:none;margin-left:auto;color:var(--fx-ink-faint,#74747C);line-height:0}
+  .fh2 nav.rail .to .off-tag svg{width:12px;height:12px;display:block}
+  .fh2 nav.rail .to.offl .off-tag{display:inline-flex}
+  .fh2 nav.rail .to.offl .off-tag+.n,.fh2 nav.rail .to.offl .n{margin-left:7px}
+  .fh2 nav.rail .to.offl:hover .off-tag{display:none}
+  .fh2 nav.rail .to.leaving{opacity:0;transition:opacity .15s var(--fx-ease,ease)}
+
+  /* + New Heading, quietly at the foot of the list */
+  .fh2 nav.rail .newhead{display:flex;align-items:center;gap:6px;width:100%;height:28px;margin-top:8px;padding:0 10px;border:0;border-radius:8px;
+    background:none;color:var(--quiet);font:inherit;font-size:var(--t-label);cursor:pointer;opacity:.75;text-align:left}
+  .fh2 nav.rail .newhead:hover{opacity:1;background:rgba(255,255,255,.04);color:var(--ink)}
+  .fh2 nav.rail .newname{display:block;height:28px;margin-top:8px}
+  .fh2 nav.rail .newhead[hidden]{display:none}
+
+  /* The drop line, and the copy of the row that follows the pointer */
+  .fh2 .rail .to.moving{height:2px;min-height:0;padding:0;margin:3px 10px;overflow:hidden;border-radius:2px;
+    background:var(--accent);opacity:1;color:transparent}
+  .fh2 .rail .to.moving>*{display:none}
+  body.arranging .rail .group[data-head]:empty{box-shadow:none;background:rgba(255,255,255,.03);border-radius:8px}
+
+  /* Find, under the film's name */
+  .fh2 .railfind{display:flex;align-items:center;gap:8px;width:100%;height:30px;margin:8px 0 0;padding:0 10px;border:0;border-radius:8px;
+    background:rgba(255,255,255,.035);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);color:var(--quiet);font:inherit;font-size:13px;cursor:pointer;text-align:left}
+  .fh2 .railfind:hover{background:rgba(255,255,255,.06);color:var(--ink)}
+  .fh2 .railfind svg{flex:none}
+  .fh2 .railfind kbd{margin-left:auto;font:inherit;font-size:11px;line-height:1.4;color:var(--fx-ink-faint,#74747C);padding:0 6px;border-radius:5px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+}
+
+/* ===========================================================================
+   PHONE SHELL (phone moves 1, 2 and 6 of design/30-portal-phone): the dock,
+   the sidebar as a sheet you can edit, and the touch rules.
+   Every rule here is inside the phone breakpoint (or `hover:none` where it
+   says so); a desk never reads any of it.
+   =========================================================================== */
+.fh2 .dock{display:none}
+@media (max-width:700px), (max-height:480px) and (pointer:coarse){
+  .fh2 .dock{display:flex}
+  /* ---- the top line: the film's mark and name, and the way back ---------- */
+  .fh2{padding-top:calc(48px + env(safe-area-inset-top,0px))}
+  .fh2 .fh-topbar{height:calc(48px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);
+    padding-left:max(13px,env(safe-area-inset-left,0px));padding-right:max(13px,env(safe-area-inset-right,0px))}
+  .fh2 .readerbar{top:calc(48px + env(safe-area-inset-top,0px))}
+  .fh2 .fh-topbar .tname{flex:0 1 auto;gap:9px;margin:0;padding:0 8px 0 0;border:0;background:none;font:inherit;
+    font-size:var(--t-body);color:var(--loud);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fh2 .fh-topbar .tname span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fh2 .fh-topbar .tname .filmicon{flex:none}
+
+  /* ---- the dock: the page pill, Find, and a white + ---------------------- */
+  .fh2{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .fh2 .dock{position:fixed;z-index:35;display:flex;align-items:center;gap:10px;
+    left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));
+    bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    transition:transform .26s var(--ease-enter),opacity .2s var(--ease-enter)}
+  /* Hidden while the page scrolls down, back when it scrolls up (`dock.js`). */
+  .fh2 .dock.away{transform:translateY(calc(100% + 28px + env(safe-area-inset-bottom,0px)));opacity:0;pointer-events:none}
+  /* The pill is the dock's long button. */
+  .fh2 .dock .nowbar{position:static;flex:1;min-width:0;height:52px;padding:0 8px 0 16px;gap:10px;border-radius:26px;
+    -webkit-tap-highlight-color:transparent}
+  .fh2 .dock .nowbar .dot{flex:none;width:3px;height:22px;border-radius:2px;margin:0 2px 0 -4px;background:var(--accent)}
+  .fh2 .dock .nowbar .nn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--t-body);font-weight:var(--w-name,600)}
+  .fh2 .dock .nowbar .nc{flex:none}
+  .fh2 .dock .nowbar .up{width:32px;height:32px;margin-left:auto;color:var(--quiet);background:rgba(255,255,255,.08);box-shadow:none}
+  .fh2 .dock .nowbar .up svg{transform:rotate(180deg)}
+  body.railopen .fh2 .dock{opacity:0;transform:translateY(12px);pointer-events:none}
+  .fh2 .dockbtn{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;padding:0;border:1px solid rgba(255,255,255,.14);
+    color:var(--loud);text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    background:rgba(58,58,64,.78);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 1px 0 rgba(0,0,0,.5),0 18px 40px -12px rgba(0,0,0,.9);
+    transition:transform .12s var(--ease-enter)}
+  .fh2 .dockbtn:active{transform:scale(.94)}
+  .fh2 .dockbtn svg{display:block}
+  .fh2 .dockbtn.dockadd{background:#F2F2F4;color:#111113;border-color:transparent}
+  .fh2.popped .dock{z-index:5}
+
+  /* The confirmation pill stands above the dock, not on it. */
+  .fx-toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+
+  /* ---- the sidebar, as a sheet ------------------------------------------ */
+  .fh2 nav.rail{max-height:calc(100vh - 56px - env(safe-area-inset-top,0px));max-height:calc(100dvh - 56px - env(safe-area-inset-top,0px))}
+  .fh2 nav.rail .railtop{display:block;padding:2px 16px 0}
+  .fh2 nav.rail .railtop .back{display:none}
+  .fh2 nav.rail .railtop .filmline{padding-right:84px}
+  .fh2 nav.rail .railtop .fh-who{min-height:44px;padding:6px 4px}
+  .fh2 nav.rail .railtop .filmname{font-size:var(--t-section);font-weight:var(--w-name,600);color:var(--loud)}
+  /* **The sheet's copy of the name and mark carries no transition name**: the top
+     line has them, and two elements sharing one cancel every transition. */
+  .fh2 nav.rail .railtop .filmicon,.fh2 nav.rail .railtop .filmname{view-transition-name:none}
+  .fh2 nav.rail .filmmenu>summary{width:44px;height:44px}
+  .fh2 nav.rail .filmmenu .pmcard{top:44px;left:0;right:auto;max-width:calc(100vw - 32px)}
+  .fh2 nav.rail .railfind{display:flex;align-items:center;gap:10px;width:100%;height:44px;margin:4px 0 2px;padding:0 14px;border:0;border-radius:12px;
+    background:rgba(255,255,255,.06);color:var(--quiet);font:inherit;font-size:16px;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:0}
+  .fh2 nav.rail .railfind:active{background:rgba(255,255,255,.1)}
+  .fh2 nav.rail .railfind svg{flex:none;width:16px;height:16px}
+  .fh2 nav.rail .railfind kbd{display:none}
+  /* Share sits in the sheet's header, on the film's name line. */
+  .fh2 nav.rail .railfoot{display:block;position:absolute;top:16px;right:16px;min-height:0;padding:0;border:0;background:none}
+  .fh2 nav.rail .railfoot>:not(.sharebtn){display:none}
+  .fh2 nav.rail .railfoot .sharebtn{min-height:44px;margin:0}
+  .fh2 .sections{padding-top:2px;-webkit-overflow-scrolling:touch}
+  .fh2 .sections > .group + .group,.fh2 .sections > .group + .grouphead{margin-top:12px}
+
+  /* Rows: 46px and a hairline between, the same list as a desk's with the
+     controls drawn, because a thumb cannot hover. */
+  .fh2 nav.rail .to{min-height:46px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .fh2 nav.rail .to .rowmore{display:grid;place-items:center;flex:none;margin:0 -10px 0 auto;width:44px;height:44px;color:var(--quiet);border-radius:10px}
+  .fh2 nav.rail .to .rowmore:active{background:rgba(255,255,255,.1);color:var(--loud)}
+  .fh2 nav.rail .to .rowmore svg{width:18px;height:18px}
+  .fh2 nav.rail .to .n{margin-left:auto}
+  .fh2 nav.rail .to .n~.rowmore,.fh2 nav.rail .to.offl .rowmore{margin-left:0}
+  .fh2 nav.rail .to .dot{display:none}
+  .fh2 nav.rail .to .off-tag{display:none;margin-left:auto;color:var(--fx-ink-faint,#74747C);line-height:0}
+  .fh2 nav.rail .to .off-tag svg{width:14px;height:14px;display:block}
+  .fh2 nav.rail .to.offl .off-tag{display:inline-flex}
+  .fh2 nav.rail .to.offl .n{margin-left:8px}
+  .fh2 nav.rail .to.leaving{opacity:0;transition:opacity .15s var(--fx-ease,ease)}
+  /* The current page is a sliver of the film's colour at the group's edge. */
+  .fh2 nav.rail .to.on::after{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+
+  /* Headings: fold arrow, name, + and ⋯, all drawn. */
+  .fh2 .grouphead{display:flex;align-items:center;gap:0;height:44px;margin:10px 0 0;padding:0 0 0 2px;position:relative;color:var(--quiet)}
+  .fh2 .grouphead:first-child{margin-top:0}
+  .fh2 .grouphead .hname{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px;font-size:var(--t-label);font-weight:600}
+  .fh2 .grouphead .hfold,.fh2 .grouphead .hplus,.fh2 .grouphead .hmore{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;
+    border:0;border-radius:10px;background:none;color:var(--quiet);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fh2 .grouphead .hfold{width:36px;margin-right:-4px}
+  .fh2 .grouphead .hfold svg{width:14px;height:14px;transition:transform .18s var(--fx-ease,ease)}
+  .fh2 .grouphead.closed .hfold svg{transform:rotate(-90deg)}
+  .fh2 .grouphead .hplus{margin-left:auto}
+  .fh2 .grouphead .hplus svg,.fh2 .grouphead .hmore svg{width:18px;height:18px}
+  .fh2 .grouphead .hplus:active,.fh2 .grouphead .hmore:active,.fh2 .grouphead .hfold:active{background:rgba(255,255,255,.1);color:var(--loud)}
+  .fh2 .group.folded{display:none}
+  .fh2 .grouphead:has(.inedit) .hplus,.fh2 .grouphead:has(.inedit) .hmore{display:none}
+  .fh2 .grouphead .inedit{height:36px;font-size:16px}
+  .fh2 nav.rail .to .inedit{height:36px;font-size:16px}
+  body.arranging .rail .group[data-head]:empty{min-height:12px;background:rgba(255,255,255,.04);border-radius:12px}
+
+  /* + New Heading, last in the list */
+  .fh2 nav.rail .newhead{display:flex;align-items:center;gap:8px;width:100%;height:46px;margin-top:10px;padding:0 4px;border:0;border-radius:12px;
+    background:none;color:var(--quiet);font:inherit;font-size:var(--t-body);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fh2 nav.rail .newhead:active{background:rgba(255,255,255,.06);color:var(--ink)}
+  .fh2 nav.rail .newhead[hidden]{display:none}
+  .fh2 nav.rail .newname{display:block;height:46px;margin-top:10px}
+
+  /* Press and hold: the row lifts, then follows the finger; the drop line is
+     the film's colour, the same as a desk. */
+  .fh2 nav.rail .to.lifted{background:rgba(255,255,255,.1);transform:scale(1.015);transition:transform .15s var(--fx-ease,ease)}
+  .fh2 nav.rail .to.moving{height:3px;min-height:0;padding:0;margin:2px 16px;overflow:hidden;border-radius:3px;background:var(--accent);opacity:1;color:transparent;transform:none}
+  .fh2 nav.rail .to.moving>*,.fh2 nav.rail .to.moving::before,.fh2 nav.rail .to.moving::after{display:none}
+  body.arranging{-webkit-user-select:none;user-select:none}
+  .fh2 .dragghost{font-size:15px;padding:10px 16px;border-radius:12px}
+
+  /* The ⌘K box is a sheet from the bottom, field first, above the keyboard. */
+  .shroud.jumpshroud{display:flex;align-items:flex-end;justify-content:center;padding:0 0 var(--kb,0px)}
+  .shroud.jumpshroud .jumpcard{width:100%;max-width:none;border-radius:20px 20px 0 0;height:min(560px,calc(100% - 64px));display:flex;flex-direction:column;
+    padding-bottom:env(safe-area-inset-bottom,0px);animation:fx-sheetup .26s var(--fx-ease,ease) backwards}
+  .shroud.jumpshroud .jumpcard .jumpfind{height:52px;font-size:16px;flex:none}
+  .shroud.jumpshroud .jumpcard .jumplist{flex:1;min-height:0;max-height:none;overscroll-behavior:contain}
+  .shroud.jumpshroud .jumpcard .jumprow{min-height:48px}
+  @keyframes fx-sheetup{from{transform:translateY(40px);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.shroud.jumpshroud .jumpcard{animation:none}}
+
+  /* A back swipe from the left edge shows itself as a soft edge glow. */
+  body.swiping::before{content:"";position:fixed;left:0;top:0;bottom:0;width:calc(var(--swipe,0) * 1px);max-width:70px;z-index:2000;pointer-events:none;
+    background:linear-gradient(90deg,rgba(255,255,255,.14),transparent)}
+}
+
+/* ---- the same, wherever the rail is -------------------------------------- */
+
+/* A text box where a name is */
+.fh2 .inedit{flex:1;min-width:0;width:100%;height:26px;margin:0;padding:0 8px;border:0;border-radius:6px;background:var(--card,#1B1B1B);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);color:var(--loud);font:inherit;font-weight:600;font-size:13px;outline:0}
+.fh2 .grouphead .inedit{font-size:13px}
+.fh-card .inedit{width:100%;height:28px;font-size:var(--t-section,17px)}
+.fh2 nav.rail .to .inedit{height:24px}
+
+/* The film's name, and the menu behind it (Updated, Refresh) */
+.fh2 .filmline{display:flex;align-items:center;gap:2px;position:relative}
+.fh2 .filmline .fh-who{flex:1;min-width:0}
+.fh2 .filmmenu{flex:none;position:relative}
+.fh2 .filmmenu>summary{display:grid;place-items:center;width:24px;height:24px;border-radius:6px;color:var(--quiet);cursor:pointer;list-style:none}
+.fh2 .filmmenu>summary::-webkit-details-marker{display:none}
+.fh2 .filmmenu>summary:hover,.fh2 .filmmenu[open]>summary{background:rgba(255,255,255,.08);color:var(--loud)}
+.fh2 .filmmenu .pmcard{top:30px;right:0;min-width:230px;padding:4px}
+.fh2 .filmmenu .railfresh{padding:6px 8px}
+
+/* The foot: avatar, +, Share */
+.fh2 .railfoot .railadd{display:grid;place-items:center;flex:none;width:30px;height:30px;margin-left:auto;border-radius:8px;
+  color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);text-decoration:none}
+.fh2 .railfoot .railadd:hover{background:rgba(255,255,255,.06);color:var(--loud)}
+.fh2 .railfoot .railadd~.sharebtn{margin-left:0}
+
+/* A file being dragged over the sidebar */
+.fh2 nav.rail.dropping{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent) 55%,transparent);background:rgba(255,255,255,.02)}
+
+.fh2 .dragghost{position:fixed;z-index:1200;pointer-events:none;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:500;
+  background:var(--fx-pop,#202022);color:var(--fx-ink,#EDEDF0);box-shadow:var(--fx-popsh);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ===========================================================================
+   Add is a menu
+   =========================================================================== */
+.fx-pop.addpop{width:330px;padding:6px}
+.addbox{display:flex;flex-direction:column}
+.addbox .fx-pop-field{margin:2px 2px 4px;width:calc(100% - 4px)}
+.addbox .fx-pop-field.shake{animation:addshake .28s}
+@keyframes addshake{20%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
+.addbox-err{font-size:13px;color:#E08A50;padding:0 10px 4px}
+.addbox-err[hidden]{display:none}
+.addkind .fx-pop-key{opacity:0}
+.addkind.on .fx-pop-key{opacity:1}
+.addkind small+.fx-pop-key{margin-left:8px}
+.addkind small{margin-left:auto}
+.addkind small~.fx-pop-key{margin-left:8px}
+.kindmark{width:22px;height:16px;border-radius:4px;flex:none;box-shadow:inset 0 0 0 1.2px var(--fx-ink-faint,#74747C)}
+.kindmark.deck{border-radius:3px}
+.kindmark.page{width:14px;height:18px;margin:0 4px;border-radius:2px}
+.kindmark.board{background:repeating-linear-gradient(90deg,transparent 0 5px,var(--fx-ink-faint,#74747C) 5px 6px),repeating-linear-gradient(0deg,transparent 0 5px,var(--fx-ink-faint,#74747C) 5px 6px)}
+.kindmark.file{width:14px;height:18px;margin:0 4px;border-radius:2px 6px 2px 2px}
+.kindmark.link{border-radius:999px}
+.addbuilt{min-height:30px}
+.addbuilt small{margin-left:auto}
+.addbuilt .fx-sw{margin-left:10px}
+
+/* A wide touch screen (an iPad) has no hover either: the heading's controls
+   and each row's ⋯ stay drawn, quietly, so nothing that edits is out of reach.
+   Rename, Remove and Seen On all live in those ⋯ menus. */
+@media (min-width:701px) and (hover:none){
+  .fh2 .grouphead .hfold,.fh2 .grouphead .hplus,.fh2 .grouphead .hmore{opacity:.7}
+  .fh2 nav.rail .to .rowmore{display:grid;opacity:.6}
+  .fh2 nav.rail .newhead{opacity:.8}
+}
+
+/* ---- phone-sheets lane: Add as a bottom sheet (move 3 of design/30-portal-phone) ----
+   Drawn only inside `feel.sheet` (add.js picks it on a phone), so nothing here
+   reaches the desk. */
+.addsheet .addbox{padding:0 12px 4px}
+.addsheet .addkind .fx-pop-key{display:none}
+.addsheet .addkind{gap:14px}
+.addsheet .addkind small{margin-left:auto;font-size:13px}
+.addsheet .addkind.on{background:none;color:var(--fx-ink-quiet)}
+.addsheet .addkind:active,.addsheet .addbuilt:active{background:var(--fx-pop-hi);color:var(--fx-ink)}
+.addsheet .addbox-err{padding:0 14px 6px;font-size:13px}
+.addsheet .fx-pop-sec{padding-left:14px}
+
+/* **Every row has a small line icon**, by what the page is; the old bullet is gone. */
+.fh2 nav.rail .to .dot{display:none}
+.fh2 nav.rail .to .ico{display:inline-flex;flex:none;width:15px;height:15px;color:var(--quiet)}
+.fh2 nav.rail .to .ico svg{width:15px;height:15px;display:block}
+.fh2 nav.rail .to:hover .ico,.fh2 nav.rail .to.on .ico{color:var(--loud)}
+.fh2 nav.rail .to.on .ico{color:var(--accent)}
+.fh2 nav.rail .to.empty .ico{opacity:.5}
+
+/* **The Library is a tile, not a row**: it holds every page, so it is centred
+   across the top of the sidebar, a little larger, with its count at the edge. */
+.fh2 nav.rail .libgroup{margin-bottom:10px}
+.fh2 nav.rail .librow{position:relative;justify-content:center;gap:9px;min-height:40px;border:1px solid var(--line-soft);background:rgba(255,255,255,.035);border-radius:10px}
+.fh2 nav.rail .librow>svg{width:17px;height:17px;flex:none;color:var(--accent)}
+.fh2 nav.rail .librow .nm{font-weight:600}
+.fh2 nav.rail .librow .n{position:absolute;right:12px;margin-left:0}
+.fh2 nav.rail .librow:hover{background:rgba(255,255,255,.065)}
+.fh2 nav.rail .librow.on{background:rgba(255,255,255,.09);border-color:var(--line)}
+.fh2 nav.rail .librow.on::before{display:none}
+.fh2 nav.rail .librow .nm{flex:none}
+
+/* **Library cards and shelves carry the same icons**, small beside a name. */
+.fh2 .fh-meta b .ico{display:inline-flex;vertical-align:-2px;margin-right:6px;color:var(--quiet)}
+.fh2 .fh-meta b .ico svg{width:14px;height:14px;display:block}
+.fh2 .fh-shelf h2>svg{width:16px;height:16px;flex:none;align-self:center;color:var(--quiet)}
+
+/* **The icon picker** in the right-click menu: the set as a grid. */
+.fh2 .iconpick{padding:6px}
+.fh2 .ipgrid{display:grid;grid-template-columns:repeat(6,32px);gap:2px}
+.fh2 .ip{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
+.fh2 .ip:hover{background:rgba(255,255,255,.08);color:var(--loud)}
+.fh2 .ip.on{background:var(--accent-tint,rgba(255,255,255,.1));color:var(--accent)}
+.fh2 .ipreset{display:block;width:100%;margin-top:6px;padding:6px 8px;border:0;border-radius:8px;background:transparent;color:var(--quiet);font:inherit;font-size:13px;text-align:center;cursor:pointer}
+.fh2 .ipreset:hover{background:rgba(255,255,255,.06);color:var(--loud)}
+
+/* ===========================================================================
+   QUIETER (his picks, 2026-10-03, design/31-portal-quiet.html 1, 2, 3, 5)
+   =========================================================================== */
+/* A page's where-from line lives in its ⋯ menu. */
+.fh2 .pmcard .pmnote{padding:6px 10px 8px;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.07);
+  font-size:13px;line-height:1.35;color:var(--fx-ink-faint,#74747C)}
+/* The address is the way to Maps. */
+.fh2 .fact a.maplink{display:inline-flex;align-items:baseline;gap:6px;color:inherit;text-decoration:none}
+.fh2 .fact a.maplink .ext{flex:none;color:var(--quiet);transform:translateY(2px)}
+.fh2 .fact a.maplink:hover{color:var(--loud)}
+/* An empty shoot day is its head and nothing under it. */
+.fh2 .lane.bare .lanehead{border-bottom:0}
+.fh2 .lane.bare .lanehead .spacer+.count{color:var(--fx-ink-faint,#74747C)}
+/* Edit lives only on a phone's sheet. */
+.fh2 nav.rail .railedit{display:none}
+@media (max-width:700px), (max-height:480px) and (pointer:coarse){
+  /* The dock's pill is the page's name, nothing else. */
+  .fh2 .dock .nowbar{padding:0 18px}
+  .fh2 nav.rail .railfoot>.railedit{display:inline-flex;align-items:center;min-height:44px;margin:0 6px 0 0;padding:0 14px;border:0;border-radius:22px;
+    background:rgba(255,255,255,.08);color:var(--ink);font:inherit;font-size:13px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fh2 nav.rail .railfoot>.railedit.on{background:#F2F2F4;color:#111113;font-weight:600}
+  .fh2 nav.rail .railfoot{display:flex}
+  .fh2 nav.rail .railfoot>:not(.sharebtn):not(.railedit){display:none}
+  /* Out of Edit: no + or ⋯ on headings, no ⋯ on rows, no New Heading, no source dots. */
+  .fh2 nav.rail:not(.editing) .grouphead .hplus,.fh2 nav.rail:not(.editing) .grouphead .hmore,
+  .fh2 nav.rail:not(.editing) .to .rowmore,.fh2 nav.rail:not(.editing) .newhead{display:none}
+  .fh2 nav.rail .to .srcdot{display:none}
+  /* The page you are on keeps its own list folded until its row is tapped. */
+  .fh2 nav.rail:not(.scopeopen) .wellwrap{display:none}
+  .fh2 nav.rail .group:has(> .wellwrap) > .to.on .n::after{content:"";display:inline-block;width:6px;height:6px;margin:0 2px 2px 10px;
+    border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);transition:transform .18s var(--fx-ease,ease)}
+  .fh2 nav.rail.scopeopen .group:has(> .wellwrap) > .to.on .n::after{transform:rotate(-135deg) translate(-2px,-2px)}
+  /* One name on screen: the top line steps back while the sheet is up. */
+  body.railopen .fh2 .fh-topbar{opacity:0;transition:opacity .2s var(--fx-ease,ease)}
+  /* In Edit, the list is for arranging: Find steps aside, Share too. */
+  .fh2 nav.rail.editing .railfind,.fh2 nav.rail.editing .railfoot>.sharebtn{display:none}
+  .fh2 nav.rail.editing .to .n,.fh2 nav.rail.editing .wellwrap{display:none}
+  /* Room on the name line for Edit and Share. */
+  .fh2 nav.rail[data-arrange] .railtop .filmline{padding-right:164px}
+  .fh2 nav.rail.editing .railtop .filmline{padding-right:84px}
+  .fh2 nav.rail.editing .to .rowmore{margin-left:auto}
+}
+
+/* ===========================================================================
+   PHONE SHEET: three sizes and a list of its own (his pick, 2026-10-03)
+   L 17 the pages · M 15 what is inside a page and the buttons · S 13 heads
+   and counts. A text box stays 16, the least iOS reads without zooming in.
+   =========================================================================== */
+@media (max-width:700px), (max-height:480px) and (pointer:coarse){
+  .fh2 nav.rail{--sl:17px;--sm:15px;--ss:13px}
+  .fh2 nav.rail .railtop .filmname,.fh2 nav.rail .to,.fh2 nav.rail .to .nm,.fh2 nav.rail .librow .nm{font-size:var(--sl)}
+  .fh2 nav.rail .librow{min-height:46px}
+  .fh2 nav.rail .librow>svg{width:16px;height:16px}
+  .fh2 nav.rail .to .n,.fh2 nav.rail .librow .n{font-size:var(--ss);color:var(--quiet)}
+  .fh2 nav.rail .grouphead .hname{font-size:var(--ss)}
+  .fh2 nav.rail .railfind,.fh2 nav.rail .sfield{font-size:16px}
+  .fh2 nav.rail .railfoot>.railedit,.fh2 nav.rail .railfoot .sharebtn,.fh2 nav.rail .filterbtn,.fh2 nav.rail .newhead{font-size:var(--sm)}
+  /* Edit is a word; Share is the one filled button up there. */
+  .fh2 nav.rail .railfoot>.railedit{background:none;padding:0 10px;color:var(--ink)}
+  .fh2 nav.rail .railfoot>.railedit.on{background:#F2F2F4;color:#111113;padding:0 14px}
+  /* Scenes, places and boards: the second size, quieter than the pages. */
+  .fh2 nav.rail .kid{min-height:44px}
+  .fh2 nav.rail .kid .hd,.fh2 nav.rail .wellwrap .hd{font-size:var(--sm);font-weight:400;color:var(--ink)}
+  .fh2 nav.rail .kid.on .hd{color:var(--loud)}
+  .fh2 nav.rail .kid .num,.fh2 nav.rail .wellwrap .kn,.fh2 nav.rail .scount,.fh2 nav.rail .sechead{font-size:var(--ss)}
+
+  /* A page's own button to its list. */
+  .fh2 .viewbar .onlybtn{flex:none;min-height:36px;padding:0 14px;font-size:var(--sm,15px)}
+  .fh2 .viewbar.listonly{min-height:48px}
+
+  /* The sheet opened from that button holds that list and nothing else. */
+  .fh2 nav.rail.only .railtop .filmline,.fh2 nav.rail.only .railfind,.fh2 nav.rail.only .railfoot,
+  .fh2 nav.rail.only .libgroup,.fh2 nav.rail.only .grouphead,.fh2 nav.rail.only .newhead,
+  .fh2 nav.rail.only .sections > .group:not(:has(> .wellwrap)),
+  .fh2 nav.rail.only .group > .to{display:none}
+  .fh2 nav.rail.only .railtop::before{content:attr(data-only);display:block;padding:8px 4px 6px;font-size:var(--sl);font-weight:600;color:var(--loud)}
+  .fh2 nav.rail.only .group:has(> .wellwrap){background:none;margin-top:0}
+  .fh2 nav.rail.only .wellwrap{display:block}
+  /* Full height: the list scrolls inside a sheet that stands nearly to the top. */
+  .fh2 nav.rail.only{height:calc(100dvh - 56px - env(safe-area-inset-top,0px))}
+  .fh2 nav.rail.only .scopedlist,.fh2 nav.rail.only .panellist{max-height:calc(100dvh - 260px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+}
+
+/* The views bar (Table · Storyboard · Document · Scenes, or All Locations)
+   stays under the top line while the page scrolls (his report, 2026-10-03). */
+@media (max-width:700px), (max-height:480px) and (pointer:coarse){
+  .fh2 .app > .viewbar{position:sticky;top:calc(48px + env(safe-area-inset-top,0px));z-index:30}
+}
+
+/* ---- Add Pages… under New Heading, and its panel (2026-10-11) -------------- */
+.fh2 nav.rail .fh-addpages{display:flex;align-items:center;gap:6px;width:100%;height:28px;margin-top:2px;padding:0 10px;border:0;border-radius:8px;
+  background:none;color:var(--quiet);font:inherit;font-size:var(--t-label);cursor:pointer;opacity:.75;text-align:left}
+.fh2 nav.rail .fh-addpages:hover{opacity:1;background:rgba(255,255,255,.04);color:var(--ink)}
+@media (min-width:701px) and (hover:none){.fh2 nav.rail .fh-addpages{opacity:.8}}
+@media (max-width:700px), (max-height:480px) and (pointer:coarse){
+  .fh2 nav.rail .fh-addpages{height:46px;margin-top:0;padding:0 4px;border-radius:12px;font-size:var(--t-body)}
+  .fh2 nav.rail:not(.editing) .fh-addpages{display:none}
+}
+.fh2 nav.rail.only .fh-addpages{display:none}
+.fh2 .rail .fh-hmoving{opacity:.45}
+.fh2 .grouphead.lifted{background:rgba(255,255,255,.06);border-radius:8px}
+.fh2 .fh-appop{width:320px;max-width:calc(100vw - 16px);padding:8px}
+.fh2 .fh-apbox{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fh2 .fh-apfind{margin:0}
+.fh2 .fh-aplist{max-height:min(56vh,420px);overflow-y:auto;display:flex;flex-direction:column;gap:1px;margin:0 -2px;padding:0 2px}
+.fh2 .fh-aphead,.fh2 .fh-aprow{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;border:0;border-radius:8px;
+  background:none;font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.fh2 .fh-aphead{min-height:36px;padding:0 10px;margin-top:4px;background:rgba(255,255,255,.04)}
+.fh2 .fh-aphead b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--t-label);font-weight:var(--w-name)}
+.fh2 .fh-apn{font-size:13px;color:var(--quiet)}
+.fh2 .fh-apchev{display:grid;place-items:center;color:var(--quiet);transition:transform .15s}
+.fh2 .fh-aphead[aria-expanded="true"] .fh-apchev{transform:rotate(90deg)}
+.fh2 .fh-aprow{min-height:38px;padding:0 10px 0 14px;font-size:var(--t-label)}
+.fh2 .fh-aprow:hover,.fh2 .fh-aphead:hover{background:var(--fx-pop-hi,#2B2B2E)}
+.fh2 .fh-apname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fh2 .fh-apck{flex:none;width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #5A5A60;display:grid;place-items:center}
+.fh2 .fh-aprow[aria-checked="true"] .fh-apck{background:#EDEDF0;box-shadow:none}
+.fh2 .fh-aprow[aria-checked="true"] .fh-apck::after{content:"";width:7px;height:4px;border-left:1.6px solid #0E0E11;border-bottom:1.6px solid #0E0E11;
+  transform:translateY(-1px) rotate(-45deg)}
+.fh2 .fh-apnone{margin:0;padding:14px 10px;font-size:var(--t-label);color:var(--quiet)}
+.fh2 .fh-apfoot{display:flex;justify-content:flex-end;gap:6px;padding-top:6px;border-top:1px solid var(--line)}
+.fh2 .fh-apbtn{min-height:34px;padding:0 13px;border:0;border-radius:9px;background:rgba(255,255,255,.07);color:var(--ink);
+  font:inherit;font-size:var(--t-label);cursor:pointer;white-space:nowrap}
+.fh2 .fh-apbtn:hover{background:rgba(255,255,255,.12);color:var(--loud)}
+.fh2 .fh-apgo{background:#EDEDF0;color:#0E0E11;font-weight:var(--w-name)}
+.fh2 .fh-apgo:hover{background:#fff;color:#0E0E11}
+.fh2 .fh-apgo:disabled{opacity:.4;cursor:default}
+.fh2 .fh-apsheet .fh-aphead{min-height:44px}
+.fh2 .fh-apsheet .fh-aprow{min-height:48px;font-size:var(--t-body)}
+.fh2 .fh-apsheet .fh-apbtn{min-height:44px;padding:0 18px}
+.fh2 .fh-apsheet .fh-aplist{max-height:none}
+.fh2 .fh-apsheet .fh-apfind{height:44px;font-size:16px}
+
+/* ---- The Library and the sidebar: a page dragged between them (2026-10-11) -- */
+.fh2:has(nav.rail[data-arrange]) .fh-lcats .fh-lrow[data-key]:not([data-outside]):not([data-archived="1"]){cursor:grab}
+.fh2 .fh-lrow.fh-ldrag{opacity:.45}
+.fh2 .fh-lpane.dropout{box-shadow:inset 0 0 0 2px var(--accent);border-radius:14px}
+/* With a mouse, a page is put on the sidebar by dragging it from the Library; Add Pages… is for a touch screen */
+@media (min-width:701px) and (hover:hover) and (pointer:fine){.fh2 nav.rail .fh-addpages{display:none}}
+
+/* ---- The Library: what each row is, and headings that read as headings (2026-10-11) -------
+   A row leads with the icon the sidebar uses for the page (his pick, or the type's), on a tile
+   tinted by what it is: a page, a deck, a board, a built-in page, a link, a file. The tint is
+   never the only signal: the first chip names the type too. Headings and rows share one left
+   edge (the icon tiles line up), and a heading is a band of its own. */
+.fh2{--k-built:#A3A3AD;--k-page:#8FB5FF;--k-deck:#FF9F7A;--k-board:#B9A0FF;--k-link:#6FD3C2;--k-file:#EBC066}
+.fh2 .fh-lcat{margin:0 0 12px;overflow:hidden}
+.fh2 .fh-lhead{min-height:60px;padding:0 54px 0 14px;gap:12px;background:rgba(255,255,255,.045)}
+.fh2 .fh-lhead b{font-size:16px;font-weight:650;letter-spacing:-.005em}
+.fh2 .fh-lhead:hover{background:rgba(255,255,255,.07)}
+.fh2 .fh-hico{flex:none;width:32px;height:32px;display:grid;place-items:center;border-radius:10px;
+  background:rgba(255,255,255,.09);color:var(--loud)}
+.fh2 .fh-lrows{border-top:0}
+.fh2 .fh-lrow{padding:0 6px 0 14px;gap:12px;min-height:56px}
+.fh2 .fh-lico{flex:none;width:32px;height:32px;display:grid;place-items:center;border-radius:10px;
+  color:var(--k-built);background:color-mix(in srgb,var(--k-built) 14%,transparent)}
+.fh2 .fh-lrow[data-kind="page"] .fh-lico{color:var(--k-page);background:color-mix(in srgb,var(--k-page) 15%,transparent)}
+.fh2 .fh-lrow[data-kind="deck"] .fh-lico{color:var(--k-deck);background:color-mix(in srgb,var(--k-deck) 15%,transparent)}
+.fh2 .fh-lrow[data-kind="board"] .fh-lico{color:var(--k-board);background:color-mix(in srgb,var(--k-board) 15%,transparent)}
+.fh2 .fh-lrow[data-kind="link"] .fh-lico{color:var(--k-link);background:color-mix(in srgb,var(--k-link) 15%,transparent)}
+.fh2 .fh-lrow[data-kind="file"] .fh-lico{color:var(--k-file);background:color-mix(in srgb,var(--k-file) 15%,transparent)}
+.fh2 .fh-lrow .fh-lchip:first-child{font-weight:var(--w-name);color:var(--k-built)}
+.fh2 .fh-lrow[data-kind="page"] .fh-lchip:first-child{color:var(--k-page)}
+.fh2 .fh-lrow[data-kind="deck"] .fh-lchip:first-child{color:var(--k-deck)}
+.fh2 .fh-lrow[data-kind="board"] .fh-lchip:first-child{color:var(--k-board)}
+.fh2 .fh-lrow[data-kind="link"] .fh-lchip:first-child{color:var(--k-link)}
+.fh2 .fh-lrow[data-kind="file"] .fh-lchip:first-child{color:var(--k-file)}
+.fh2 .fh-loff .fh-lico{opacity:.5}
+.fh2 .fh-lcatedit{left:58px;width:calc(100% - 170px)}
+.fh2 .fh-lcatmenu{top:10px}
+@media (max-width:700px){
+  .fh2 .fh-lhead{min-height:64px}
+  .fh2 .fh-lcatmenu{top:10px}
+  .fh2 .fh-lrow{min-height:60px}
+}

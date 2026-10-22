@@ -1,0 +1,22 @@
+[package]
+name = "shotlister-web"
+version = "0.1.0"
+edition = "2021"
+description = "The engine, in a browser. Change logs in, a shot list out."
+
+# **The engine and nothing else.** Not storage, not remote, not the C boundary —
+# all three read and write files, which a browser cannot do and does not need to.
+# Dependency-free like everything else here: the boundary below is forty lines of
+# pointer passing rather than a code-generation crate.
+[dependencies]
+shotlister-engine = { path = "../engine", default-features = false }
+
+[lib]
+name = "shotlister_web"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
